@@ -1,0 +1,15 @@
+services:
+  db:
+    image: mysql:8.0 # You can specify a version, e.g., mysql:latest or mysql:8.0
+    container_name: mysql_container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root # (Change this to a secure password)
+      MYSQL_DATABASE: mysql_db
+    ports:
+      - "3306:3306" # Maps port 3306 on your host to port 3306 in the container
+    volumes:
+      - mysql_data:/var/lib/mysql # Persists data to a named volume
+
+volumes:
+  mysql_data: # Defines the named volume

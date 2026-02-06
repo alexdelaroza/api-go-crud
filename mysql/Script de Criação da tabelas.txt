@@ -1,0 +1,28 @@
+CREATE TABLE mysql_db.usuarios (
+    cod_usuario INT,
+    nome_usuario VARCHAR(250) NOT NULL,
+    login_usuario VARCHAR(250) NOT NULL,
+    senha_usuario VARCHAR(250) NOT NULL,
+    email_usuario VARCHAR(250) UNIQUE,
+    tipo_usuario VARCHAR(250) NOT NULL,
+    data_ult_atu_usuario TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (cod_usuario)
+);
+
+CREATE TABLE mysql_db.servico (
+    cod_servico INT,
+    descricao_servico VARCHAR(250) NOT NULL,
+    valor_servico DECIMAL(10, 2) NOT NULL,
+    data_ult_atu_servico TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT chk_valor_positivo CHECK (valor_servico > 0),
+    PRIMARY KEY (cod_servico)
+);
+
+CREATE TABLE mysql_db.log (
+    cod_log INT,
+    descricao_log TEXT NULL,
+    cod_recurso INT NOT NULL,
+    tipo_log VARCHAR(250) NOT NULL,
+    data_ult_atu_log TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (cod_log)
+);
