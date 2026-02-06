@@ -1,0 +1,26 @@
+CREATE TABLE usuarios (
+    cod_usuario INT PRIMARY KEY,
+    nome_usuario VARCHAR(250) NOT NULL,
+    login_usuario VARCHAR(250) NOT NULL,
+    senha_usuario VARCHAR(250) NOT NULL,
+    email_usuario VARCHAR(250) UNIQUE,
+    tipo_usuario VARCHAR(250) NOT NULL,
+    data_ult_atu_usuario TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE servico (
+    cod_servico INT PRIMARY KEY,
+    descricao_servico VARCHAR(250) NOT NULL,
+    valor_servico NUMERIC CHECK(valor_servico > 0) NOT NULL,
+    data_ult_atu_servico TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE log (
+    cod_log INT PRIMARY KEY,
+    descricao_log TEXT NULL,
+    cod_recurso INT NOT NULL,
+    tipo_log VARCHAR(250) NOT NULL,
+    data_ult_atu_log TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
