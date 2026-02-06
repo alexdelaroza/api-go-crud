@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"log"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -10,7 +11,7 @@ import (
 func main() {
 	db, err := sql.Open("mysql", "root:root@/cursogo")
 	if err != nil {
-		panic(err)
+		log.Fatal("Erro ao conectar:", err)
 	}
 	defer db.Close()
 
