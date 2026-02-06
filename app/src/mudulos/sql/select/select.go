@@ -32,8 +32,8 @@ func main() {
 	for rows.Next() {
 		var u usuario
 		rows.Scan(&u.cod_usuario, &u.nome_usuario, &u.login_usuario, &u.senha_usuario, &u.email_usuario, &u.tipo_usuario, &u.data_ult_atu)
-		fmt.Printf("Usuário: %d - %s (Atualizado em: %s)\n", 
-            u.cod_usuario, u.nome_usuario, u.data_ult_atu.Format("02/01/2006 15:04:05"))
+		fmt.Printf("Usuário: %d - %s (Atualizado em: %s)\n",
+			u.cod_usuario, u.nome_usuario, u.data_ult_atu.Format("02/01/2006 15:04:05"))
 	}
 
 }

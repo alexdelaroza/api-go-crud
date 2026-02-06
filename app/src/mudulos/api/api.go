@@ -2,6 +2,7 @@ package api
 
 import "fmt"
 
-func api() {
-	fmt.Println("api")
+//TESTE
+func Teste() {
+	fmt.Println("funciona")
 }
