@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	//"API-GO-CRUD/src/modulos/api"
+
+	"github.com/alexdelaroza/api-go-crud/src/modulos/api"
 )
 
 func main() {
 	fmt.Println("alex")
 
-	//api.Teste()
+	api.Teste()
 
 }
