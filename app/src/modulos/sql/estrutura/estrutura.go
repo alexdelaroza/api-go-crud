@@ -2,8 +2,9 @@ package main
 
 import (
 	"database/sql"
+	"log"
 
-	_ "github.com/go-sql-driver/mysql"
+	banco "github.com/alexdelaroza/api-go-crud/src/modulos/sql/banco"
 )
 
 func exec(db *sql.DB, sql string) sql.Result {
@@ -15,9 +16,9 @@ func exec(db *sql.DB, sql string) sql.Result {
 }
 
 func main() {
-	db, err := sql.Open("mysql", "root:root@/")
+	db, err := banco.Conectar()
 	if err != nil {
-		panic(err)
+		log.Fatal("Erro ao conectar:", err)
 	}
 	defer db.Close()
 
