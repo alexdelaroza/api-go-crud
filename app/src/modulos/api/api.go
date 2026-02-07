@@ -4,5 +4,5 @@ import "fmt"
 
 //TESTE
 func Teste() {
-	fmt.Println("funciona")
+	fmt.Println("API funciona")
 }

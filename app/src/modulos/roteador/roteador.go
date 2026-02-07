@@ -2,6 +2,6 @@ package roteador
 
 import "fmt"
 
-func roteador() {
+func Roteador() {
 	fmt.Println("roteador")
 }
