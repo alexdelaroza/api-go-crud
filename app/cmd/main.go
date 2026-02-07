@@ -16,5 +16,4 @@ func main() {
 	//usuario_Sql.Insere()
 	//usuario_Sql.Atualiza()
 	usuario_Sql.Consulta()
-
 }
