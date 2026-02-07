@@ -10,7 +10,6 @@ import (
 
 func main() {
 	fmt.Println("alex")
-
 	api.Teste()
 	roteador.Roteador()
 	//usuario_Sql.Deleta()
