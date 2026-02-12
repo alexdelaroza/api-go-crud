@@ -5,10 +5,10 @@ import (
 	"log"
 	"time"
 
-	banco "github.com/alexdelaroza/api-go-crud/src/modulos/sql/banco"
+	connect "github.com/alexdelaroza/api-go-crud/src/sql/connect"
 )
 
-type usuario struct {
+type Usuario struct {
 	cod_usuario   int
 	nome_usuario  string
 	login_usuario string
@@ -19,7 +19,7 @@ type usuario struct {
 }
 
 func Insere() {
-	db, err := banco.Conectar()
+	db, err := connect.Conectar()
 	if err != nil {
 		log.Fatal("Erro ao conectar:", err)
 	}
@@ -52,7 +52,7 @@ func Insere() {
 }
 
 func Atualiza() {
-	db, err := banco.Conectar()
+	db, err := connect.Conectar()
 	if err != nil {
 		log.Fatal("Erro ao conectar:", err)
 	}
@@ -86,7 +86,7 @@ func Atualiza() {
 }
 
 func Deleta() {
-	db, err := banco.Conectar()
+	db, err := connect.Conectar()
 	if err != nil {
 		log.Fatal("Erro ao conectar:", err)
 	}
@@ -106,7 +106,7 @@ func Deleta() {
 }
 
 func Consulta() {
-	db, err := banco.Conectar()
+	db, err := connect.Conectar()
 	if err != nil {
 		log.Fatal("Erro ao conectar:", err)
 	}
@@ -116,7 +116,7 @@ func Consulta() {
 	defer db.Close()
 
 	for rows.Next() {
-		var u usuario
+		var u Usuario
 		rows.Scan(&u.cod_usuario, &u.nome_usuario, &u.login_usuario, &u.senha_usuario, &u.email_usuario, &u.tipo_usuario, &u.data_ult_atu)
 		fmt.Printf("Usuário: %d - %s (Atualizado em: %s)\n",
 			u.cod_usuario, u.nome_usuario, u.data_ult_atu.Format("02/01/2006 15:04:05"))

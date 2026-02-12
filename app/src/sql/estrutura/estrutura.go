@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"log"
 
-	banco "github.com/alexdelaroza/api-go-crud/src/modulos/sql/banco"
+	connect "github.com/alexdelaroza/api-go-crud/src/sql/connect"
 )
 
 func exec(db *sql.DB, sql string) sql.Result {
@@ -16,7 +16,7 @@ func exec(db *sql.DB, sql string) sql.Result {
 }
 
 func main() {
-	db, err := banco.Conectar()
+	db, err := connect.Conectar()
 	if err != nil {
 		log.Fatal("Erro ao conectar:", err)
 	}

@@ -1,4 +1,4 @@
-package banco
+package connect
 
 import (
 	"database/sql"
@@ -8,7 +8,6 @@ import (
 
 // Conectar - abre aconexão com o banco de dados
 func Conectar() (*sql.DB, error) {
-	//stringConexao := "root:root@/cursogo"
 	stringConexao := "root:root@/cursogo?parseTime=True"
 
 	db, erro := sql.Open("mysql", stringConexao)
