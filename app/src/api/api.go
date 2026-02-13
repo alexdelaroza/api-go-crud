@@ -21,6 +21,7 @@ func Deleta_Usuario(c *fiber.Ctx) error {
 	return c.SendString("Hello R, World 👋!")
 }
 
+
 // TESTE
 func Consulta_Servico(c *fiber.Ctx) error {
 	return c.SendString("Hello C, World 👋!")
@@ -29,6 +30,15 @@ func Consulta_Servico(c *fiber.Ctx) error {
 func Insere_Servico(c *fiber.Ctx) error {
 	return c.SendString("Hello R, World 👋!")
 }
+// TESTE
+func Atualiza_Servico(c *fiber.Ctx) error {
+	return c.SendString("Hello R, World 👋!")
+}
+// TESTE
+func Deleta_Servico(c *fiber.Ctx) error {
+	return c.SendString("Hello R, World 👋!")
+}
+
 
 // TESTE
 func Consulta_Log(c *fiber.Ctx) error {

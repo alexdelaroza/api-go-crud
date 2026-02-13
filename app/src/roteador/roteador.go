@@ -16,4 +16,7 @@ func Setup(app *fiber.App) {
 	app.Get("/api/servico", api.Consulta_Servico)
 	app.Post("/api/servico", api.Insere_Servico)
 
+	app.Get("/api/servico/id", api.Consulta_Servico)
+	app.Put("/api/servico/id", api.Atualiza_Servico)
+	app.Delete("/api/servico/id", api.Deleta_Servico)
 }
