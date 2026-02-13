@@ -1,7 +1,7 @@
 package roteador
 
 import (
-	"github.com/alexdelaroza/api-go-crud/src/api"
+	"api-go-crud/src/api"
 	"github.com/gofiber/fiber/v2"
 )
 

@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"log"
 
-	connect "github.com/alexdelaroza/api-go-crud/src/sql/connect"
+	connect "api-go-crud/src/sql/connect"
 )
 
 func exec(db *sql.DB, sql string) sql.Result {

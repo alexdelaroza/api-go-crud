@@ -5,8 +5,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	roteador "github.com/alexdelaroza/api-go-crud/src/roteador"
-	usuario_Sql "github.com/alexdelaroza/api-go-crud/src/sql/usuario_Sql"
+	roteador "api-go-crud/src/roteador"
+	usuario_Sql "api-go-crud/src/sql/usuario_Sql"
 )
 
 func main() {

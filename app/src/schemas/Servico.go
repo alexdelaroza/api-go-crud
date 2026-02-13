@@ -5,8 +5,8 @@ import (
 )
 
 type Servico struct {
-	cod_servico         int
-	descricao_servico   string
-	valor_servico       float64
-	data_ult_atu_servic time.Time
+	Codigo       int
+	Descricao    string
+	Valor        float64
+	Data_ult_atu time.Time
 }
