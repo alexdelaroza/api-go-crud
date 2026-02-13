@@ -7,17 +7,17 @@ import (
 )
 
 func Setup(app *fiber.App) {
-	app.Get("/api/usuario", api.Consulta_Usuario)
-	app.Post("/api/usuario", api.Insere_Usuario)
+	app.Get("/usuario", api.Consulta_Usuario)
+	app.Post("/usuario", api.Insere_Usuario)
 
-	app.Get("/api/usuario/:id", api.Consulta_Usuario)
-	app.Put("/api/usuario/:id", api.Atualiza_Usuario)
-	app.Delete("/api/usuario/:id", api.Deleta_Usuario)
+	app.Get("/usuario/:id", api.Consulta_Usuario)
+	app.Put("/usuario/:id", api.Atualiza_Usuario)
+	app.Delete("/usuario/:id", api.Deleta_Usuario)
 
-	app.Get("/api/servico", api.Consulta_Servico)
-	app.Post("/api/servico", api.Insere_Servico)
+	app.Get("/servico", api.Consulta_Servico)
+	app.Post("/servico", api.Insere_Servico)
 
-	app.Get("/api/servico/:id", api.Consulta_Servico)
-	app.Put("/api/servico/:id", api.Atualiza_Servico)
-	app.Delete("/api/servico/:id", api.Deleta_Servico)
+	app.Get("/servico/:id", api.Consulta_Servico)
+	app.Put("/servico/:id", api.Atualiza_Servico)
+	app.Delete("/servico/:id", api.Deleta_Servico)
 }
