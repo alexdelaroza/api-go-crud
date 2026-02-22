@@ -1,6 +1,9 @@
-package api
+package controllers
 
 import (
+	"api-go-crud/src/database"
+	"api-go-crud/src/models"
+
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -11,7 +14,31 @@ func Consulta_Usuario(c *fiber.Ctx) error {
 
 // TESTE
 func Insere_Usuario(c *fiber.Ctx) error {
-	return c.SendString("Hello Insere_Usuario, World 👋!")
+	var data map[string]string
+	err := c.BodyParser(&data)
+
+	if err != nil {
+		return err
+	}
+
+	if data["tipo"] != data["confirm_tipo"] {
+		c.Status(400)
+		return c.JSON(fiber.Map{
+			"message": "tipo do not match!",
+		})
+	}
+
+	var novo_usuario models.Usuario
+	novo_usuario.Codigo = data["codigo"]
+	novo_usuario.Nome = data["nome"]
+	novo_usuario.Login = data["login"]
+	novo_usuario.Senha = data["senha"]
+	novo_usuario.Email = data["email"]
+	novo_usuario.Tipo = data["tipo"]
+
+	database.Usuario_Inserir(novo_usuario)
+
+	return c.JSON(novo_usuario)
 }
 
 // TESTE

@@ -1,10 +1,8 @@
-package main
+package database
 
 import (
 	"database/sql"
 	"log"
-
-	connect "api-go-crud/src/sql/connect"
 )
 
 func exec(db *sql.DB, sql string) sql.Result {
@@ -15,8 +13,8 @@ func exec(db *sql.DB, sql string) sql.Result {
 	return result
 }
 
-func main() {
-	db, err := connect.Conectar()
+func Create_table() {
+	db, err := Conectar()
 	if err != nil {
 		log.Fatal("Erro ao conectar:", err)
 	}
@@ -27,11 +25,11 @@ func main() {
 
 	exec(db, "drop table if exists usuarios")
 	exec(db, `create table usuarios (
-             cod_usuario INT,
+             cod_usuario VARCHAR(36),
              nome_usuario VARCHAR(250) NOT NULL,
              login_usuario VARCHAR(250) NOT NULL,
              senha_usuario VARCHAR(250) NOT NULL,
-             email_usuario VARCHAR(250) UNIQUE,
+             email_usuario VARCHAR(250) NOT NULL UNIQUE,
              tipo_usuario VARCHAR(250) NOT NULL,
              data_ult_atu_usuario TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
              PRIMARY KEY (cod_usuario)
@@ -39,7 +37,7 @@ func main() {
 
 	exec(db, "drop table if exists servico")
 	exec(db, `create table servico (
-             cod_servico INT,
+             cod_servico VARCHAR(36),
              descricao_servico VARCHAR(250) NOT NULL,
              valor_servico DECIMAL(10, 2) NOT NULL,
              data_ult_atu_servico TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -49,10 +47,10 @@ func main() {
 
 	exec(db, "drop table if exists log")
 	exec(db, `create table log (
-             cod_log INT,
-             descricao_log TEXT NULL,
+             cod_log VARCHAR(36),
+             descricao_log TEXT NOT NULL,
              cod_recurso INT NOT NULL,
-             tipo_log VARCHAR(250) NOT NULL,
+             criado_por_log VARCHAR(250) NOT NULL,
              data_ult_atu_log TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
              PRIMARY KEY (cod_log)
         )`)

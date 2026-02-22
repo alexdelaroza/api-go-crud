@@ -1,15 +1,14 @@
-package usuario_Sql
+package database
 
 import (
 	"fmt"
 	"log"
 
-	schemas "api-go-crud/src/schemas"
-	connect "api-go-crud/src/sql/connect"
+	"api-go-crud/src/models"
 )
 
-func Insere() {
-	db, err := connect.Conectar()
+func Usuario_Inserir(novo_usuario models.Usuario) {
+	db, err := Conectar()
 	if err != nil {
 		log.Fatal("Erro ao conectar:", err)
 	}
@@ -26,13 +25,16 @@ func Insere() {
 
 	stmt, _ := db.Prepare(query)
 
-	res, _ := stmt.Exec(1, // cod_usuario
-		"Maria",           // nome_usuario
-		"mariasilva",      // login_usuario
-		"senha123",        // senha_usuario
-		"maria@email.com", // email_usuario
-		"admin",           // tipo_usuario
-	)
+	//res, _ := stmt.Exec(1, // cod_usuario
+	//	"Maria",           // nome_usuario
+	//	"mariasilva",      // login_usuario
+	//	"senha123",        // senha_usuario
+	//	"maria@email.com", // email_usuario
+	//	"admin",           // tipo_usuario
+	//)
+
+	// Passamos os campos da struct para o Exec
+	res, err := stmt.Exec(novo_usuario.Codigo, novo_usuario.Nome, novo_usuario.Login, novo_usuario.Senha, novo_usuario.Email, novo_usuario.Tipo)
 
 	id, _ := res.LastInsertId()
 	fmt.Println(id)
@@ -41,8 +43,8 @@ func Insere() {
 	fmt.Printf("Sucesso! %d linha(s) afetada(s).\n", linhas)
 }
 
-func Atualiza() {
-	db, err := connect.Conectar()
+func Usuario_Atualizar() {
+	db, err := Conectar()
 	if err != nil {
 		log.Fatal("Erro ao conectar:", err)
 	}
@@ -75,8 +77,8 @@ func Atualiza() {
 	fmt.Printf("Sucesso! %d linha(s) afetada(s).\n", linhas)
 }
 
-func Deleta() {
-	db, err := connect.Conectar()
+func Usuario_Deletar() {
+	db, err := Conectar()
 	if err != nil {
 		log.Fatal("Erro ao conectar:", err)
 	}
@@ -95,8 +97,8 @@ func Deleta() {
 	fmt.Printf("Sucesso! %d linha(s) afetada(s).\n", linhas)
 }
 
-func Consulta() {
-	db, err := connect.Conectar()
+func Usuario_Consultar() {
+	db, err := Conectar()
 	if err != nil {
 		log.Fatal("Erro ao conectar:", err)
 	}
@@ -106,7 +108,7 @@ func Consulta() {
 	defer db.Close()
 
 	for rows.Next() {
-		var usuario schemas.Usuario
+		var usuario models.Usuario
 		rows.Scan(&usuario.Codigo, &usuario.Nome, &usuario.Login, &usuario.Senha, &usuario.Email, &usuario.Tipo, &usuario.Data_ult_atu)
 		fmt.Printf("Usuário: %d - %s (Atualizado em: %s)\n",
 			usuario.Codigo, usuario.Nome, usuario.Data_ult_atu.Format("02/01/2006 15:04:05"))

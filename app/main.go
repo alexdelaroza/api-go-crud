@@ -5,16 +5,17 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	roteador "api-go-crud/src/roteador"
-	usuario_Sql "api-go-crud/src/sql/usuario_Sql"
+	"api-go-crud/src/database"
+	"api-go-crud/src/roteador"
 )
 
 func main() {
 	fmt.Println("alex")
-	//usuario_Sql.Deleta()
-	//usuario_Sql.Insere()
-	//usuario_Sql.Atualiza()
-	usuario_Sql.Consulta()
+	//database.Create_table()
+	//database.Usuario_Deletar()
+	//database.Usuario_Inserir()
+	//database.Usuario_Atualizar()
+	database.Usuario_Consultar()
 
 	// cria a instancia do WEB server
 	app := fiber.New()
