@@ -107,7 +107,6 @@ func Usuario_Deletar(codigo_usuario string) (string, error) {
 	return mensagem, nil
 }
 
-
 func Usuario_Consultar_Codigo(codigo_usuario string) (models.Usuario, bool, error) {
 	var usuario models.Usuario
 	db, err := Conectar()
@@ -146,17 +145,14 @@ func Usuario_Consultar() ([]models.Usuario, error) {
 	}
 	defer db.Close()
 
-	// 1. Criamos a lista vazia
 	var usuarios []models.Usuario
 
-	// 2. Executamos a query (removendo o filtro fixo de ID se quiser todos)
 	//rows, err := db.Query("SELECT cod_usuario, nome_usuario, login_usuario, senha_usuario, email_usuario, tipo_usuario, data_ult_atu FROM usuarios")
 	rows, err := db.Query("SELECT * FROM usuarios")
 	if err != nil {
 		return nil, err
 	}
 
-	// 3. Iteramos pelos resultados
 	for rows.Next() {
 		var u models.Usuario
 
@@ -168,7 +164,6 @@ func Usuario_Consultar() ([]models.Usuario, error) {
 		usuarios = append(usuarios, u)
 	}
 
-	// 5. Verificamos se houve erro durante a iteração
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
