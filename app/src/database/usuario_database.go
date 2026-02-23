@@ -25,22 +25,13 @@ func Usuario_Inserir(novo_usuario models.Usuario) (string, error) {
 
 	stmt, _ := db.Prepare(query)
 
-	//res, _ := stmt.Exec(1, // cod_usuario
-	//	"Maria",           // nome_usuario
-	//	"mariasilva",      // login_usuario
-	//	"senha123",        // senha_usuario
-	//	"maria@email.com", // email_usuario
-	//	"admin",           // tipo_usuario
-	//)
-
-	// Passamos os campos da struct para o Exec
 	res, err := stmt.Exec(novo_usuario.Codigo, novo_usuario.Nome, novo_usuario.Login, novo_usuario.Senha, novo_usuario.Email, novo_usuario.Tipo)
 
 	id, _ := res.LastInsertId()
 	fmt.Println(id)
 
 	linhas, _ := res.RowsAffected()
-	// fmt.Sprintf cria a string formatada para ser retornada
+	// fmt.Sprintf cria a string formatada
 	mensagem := fmt.Sprintf("Sucesso! %d linha(s) afetada(s).", linhas)
 
 	return mensagem, nil
@@ -63,15 +54,6 @@ func Usuario_Atualizar(altera_usuario models.Usuario) (string, error) {
 
 	stmt, _ := db.Prepare(query)
 
-	//res, _ := stmt.Exec(1, // cod_usuario
-	//	"Antonio",           // nome_usuario
-	//	"antoniocarlos",     // login_usuario
-	//	"senha123",          // senha_usuario
-	//	"antonio@email.com", // email_usuario
-	//	"admin",             // tipo_usuario
-	//)
-
-	// Passamos os campos da struct para o Exec
 	res, err := stmt.Exec(altera_usuario.Nome, altera_usuario.Login, altera_usuario.Senha, altera_usuario.Email, altera_usuario.Tipo, altera_usuario.Codigo)
 
 	id, _ := res.LastInsertId()
@@ -101,7 +83,7 @@ func Usuario_Deletar(codigo_usuario string) (string, error) {
 	fmt.Println(id)
 
 	linhas, _ := res.RowsAffected()
-	// fmt.Sprintf cria a string formatada para ser retornada
+	// fmt.Sprintf cria a string formatada
 	mensagem := fmt.Sprintf("Sucesso! %d linha(s) afetada(s).", linhas)
 
 	return mensagem, nil
@@ -132,7 +114,7 @@ func Usuario_Consultar_Codigo(codigo_usuario string) (models.Usuario, bool, erro
 
 	if err != nil {
 		fmt.Println("entrou 2")
-		return usuario, false, err // Erro real (conexão, sintaxe, etc)
+		return usuario, false, err // Erro real
 	}
 	fmt.Println("entrou 3")
 	return usuario, true, nil // Encontrou com sucesso
