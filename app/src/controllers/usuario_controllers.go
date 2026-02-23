@@ -276,11 +276,11 @@ func Consulta_Usuario_Codigo(c *fiber.Ctx) error {
 
 	var consulta_usuario models.Usuario
 	consulta_usuario.Codigo = data["codigo"]
-	consulta_usuario.Nome = data["nome"]
-	consulta_usuario.Login = data["login"]
-	consulta_usuario.Senha = data["senha"]
-	consulta_usuario.Email = data["email"]
-	consulta_usuario.Tipo = data["tipo"]
+	//consulta_usuario.Nome = data["nome"]
+	//consulta_usuario.Login = data["login"]
+	//consulta_usuario.Senha = data["senha"]
+	//consulta_usuario.Email = data["email"]
+	//consulta_usuario.Tipo = data["tipo"]
 
 	// Verificar se o Usuario ja existe no Cadastro
 	usuario, achou, err := database.Usuario_Consultar_Codigo(consulta_usuario.Codigo)
