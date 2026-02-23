@@ -106,56 +106,23 @@ func Insere_Usuario(c *fiber.Ctx) error {
 func Atualiza_Usuario(c *fiber.Ctx) error {
 	var data map[string]string
 	err := c.BodyParser(&data)
-
 	if err != nil {
 		return err
 	}
 
+	var id string
+	id = c.Params("id")
+
 	// Valida Dados de Entrada
-	if data["codigo"] == "" {
+	if id == "" {
 		c.Status(400)
 		return c.JSON(fiber.Map{
 			"message": "O campo 'codigo' é obrigatório e deve ser preenchido!",
 		})
 	}
 
-	if data["nome"] == "" {
-		c.Status(400)
-		return c.JSON(fiber.Map{
-			"message": "O campo 'nome' é obrigatório e deve ser preenchido!",
-		})
-	}
-
-	if data["login"] == "" {
-		c.Status(400)
-		return c.JSON(fiber.Map{
-			"message": "O campo 'login' é obrigatório e deve ser preenchido!",
-		})
-	}
-
-	if data["senha"] == "" {
-		c.Status(400)
-		return c.JSON(fiber.Map{
-			"message": "O campo 'senha' é obrigatório e deve ser preenchido!",
-		})
-	}
-
-	if data["email"] == "" {
-		c.Status(400)
-		return c.JSON(fiber.Map{
-			"message": "O campo 'email' é obrigatório e deve ser preenchido!",
-		})
-	}
-
-	if data["tipo"] == "" {
-		c.Status(400)
-		return c.JSON(fiber.Map{
-			"message": "O campo 'tipo' é obrigatório e deve ser preenchido!",
-		})
-	}
-
 	var altera_usuario models.Usuario
-	altera_usuario.Codigo = data["codigo"]
+	altera_usuario.Codigo = id
 	altera_usuario.Nome = data["nome"]
 	altera_usuario.Login = data["login"]
 	altera_usuario.Senha = data["senha"]
@@ -171,11 +138,11 @@ func Atualiza_Usuario(c *fiber.Ctx) error {
 	if !achou {
 		// Usuário não existe. Não sera alterado...
 		var msg string
-		msg = fmt.Sprintf("Usuário %s não encontrado...", usuario.Codigo)
+		msg = fmt.Sprintf("Usuário %s não encontrado...", altera_usuario.Codigo)
 		c.Status(400)
 		return c.JSON(fiber.Map{
 			"message": msg,
-			"user":    altera_usuario, // Adiciona o objeto inteiro aqui
+			"user":    usuario, // Adiciona o objeto inteiro aqui
 		})
 
 	} else {
@@ -201,13 +168,15 @@ func Atualiza_Usuario(c *fiber.Ctx) error {
 func Deleta_Usuario(c *fiber.Ctx) error {
 	var data map[string]string
 	err := c.BodyParser(&data)
-
 	if err != nil {
 		return err
 	}
 
+	var id string
+	id = c.Params("id")
+
 	// Valida Dados de Entrada
-	if data["codigo"] == "" {
+	if id == "" {
 		c.Status(400)
 		return c.JSON(fiber.Map{
 			"message": "O campo 'codigo' é obrigatório e deve ser preenchido!",
@@ -215,7 +184,7 @@ func Deleta_Usuario(c *fiber.Ctx) error {
 	}
 
 	var deleta_usuario models.Usuario
-	deleta_usuario.Codigo = data["codigo"]
+	deleta_usuario.Codigo = id
 	deleta_usuario.Nome = data["nome"]
 	deleta_usuario.Login = data["login"]
 	deleta_usuario.Senha = data["senha"]
@@ -231,7 +200,7 @@ func Deleta_Usuario(c *fiber.Ctx) error {
 	if !achou {
 		// Usuário não existe. Não é possivel efetuar a exclusão...
 		var msg string
-		msg = fmt.Sprintf("Usuário %s não encontrado...", usuario.Codigo)
+		msg = fmt.Sprintf("Usuário %s não encontrado...", deleta_usuario.Codigo)
 		c.Status(400)
 		return c.JSON(fiber.Map{
 			"message": msg,
@@ -240,7 +209,7 @@ func Deleta_Usuario(c *fiber.Ctx) error {
 
 	} else {
 		// Usuário existe. E sera efetuada a exclusão...
-		msg, err := database.Usuario_Deletar(deleta_usuario.Codigo)
+		msg, err := database.Usuario_Deletar(usuario.Codigo)
 
 		if err != nil {
 			c.Status(500)
@@ -250,7 +219,7 @@ func Deleta_Usuario(c *fiber.Ctx) error {
 		c.Status(201)
 		return c.JSON(fiber.Map{
 			"message": msg,
-			"user":    deleta_usuario, // Adiciona o objeto inteiro aqui
+			"user":    usuario, // Adiciona o objeto inteiro aqui
 		})
 	}
 
@@ -258,32 +227,39 @@ func Deleta_Usuario(c *fiber.Ctx) error {
 }
 
 // TESTE
+func Consulta_Usuario(c *fiber.Ctx) error {
+	lista, err := database.Usuario_Consultar()
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Erro ao buscar usuários"})
+	}
+
+	c.Status(201)
+	// Retorna a lista completa de Usuarios Cadastrados como um array JSON
+	return c.JSON(lista)
+
+}
+
 func Consulta_Usuario_Codigo(c *fiber.Ctx) error {
-	var data map[string]string
+	var data models.Usuario
 	err := c.BodyParser(&data)
 
 	if err != nil {
 		return err
 	}
 
+	var id string
+	id = c.Params("id")
+
 	// Valida Dados de Entrada
-	if data["codigo"] == "" {
+	if id == "" {
 		c.Status(400)
 		return c.JSON(fiber.Map{
 			"message": "O campo 'codigo' é obrigatório e deve ser preenchido!",
 		})
 	}
 
-	var consulta_usuario models.Usuario
-	consulta_usuario.Codigo = data["codigo"]
-	//consulta_usuario.Nome = data["nome"]
-	//consulta_usuario.Login = data["login"]
-	//consulta_usuario.Senha = data["senha"]
-	//consulta_usuario.Email = data["email"]
-	//consulta_usuario.Tipo = data["tipo"]
-
 	// Verificar se o Usuario ja existe no Cadastro
-	usuario, achou, err := database.Usuario_Consultar_Codigo(consulta_usuario.Codigo)
+	usuario, achou, err := database.Usuario_Consultar_Codigo(id)
 	if err != nil {
 		return c.Status(500).SendString("Erro interno no banco")
 	}
@@ -309,17 +285,4 @@ func Consulta_Usuario_Codigo(c *fiber.Ctx) error {
 	}
 
 	//return c.JSON(novo_usuario)
-}
-
-// TESTE
-func Consulta_Usuario(c *fiber.Ctx) error {
-	lista, err := database.Usuario_Consultar()
-	if err != nil {
-		return c.Status(500).JSON(fiber.Map{"error": "Erro ao buscar usuários"})
-	}
-
-	c.Status(201)
-	// Retorna a lista completa de Usuarios Cadastrados como um array JSON
-	return c.JSON(lista)
-
 }
