@@ -313,11 +313,13 @@ func Consulta_Usuario_Codigo(c *fiber.Ctx) error {
 
 // TESTE
 func Consulta_Usuario(c *fiber.Ctx) error {
-	var msg string
-	c.Status(201)
-	return c.JSON(fiber.Map{
-		"message": msg,
-	})
+	lista, err := database.Usuario_Consultar()
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Erro ao buscar usuários"})
+	}
 
-	//return c.JSON(novo_usuario)
+	c.Status(201)
+	// Retorna a lista completa de Usuarios Cadastrados como um array JSON
+	return c.JSON(lista)
+
 }

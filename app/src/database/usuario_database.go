@@ -107,22 +107,6 @@ func Usuario_Deletar(codigo_usuario string) (string, error) {
 	return mensagem, nil
 }
 
-func Usuario_Consultar() {
-	db, err := Conectar()
-	if err != nil {
-		log.Fatal("Erro ao conectar:", err)
-	}
-	defer db.Close()
-
-	rows, _ := db.Query("select * from usuarios where cod_usuario = ?", 1)
-
-	for rows.Next() {
-		var usuario models.Usuario
-		rows.Scan(&usuario.Codigo, &usuario.Nome, &usuario.Login, &usuario.Senha, &usuario.Email, &usuario.Tipo, &usuario.Data_ult_atu)
-		fmt.Printf("Usuário: %s - %s (Atualizado em: %s)\n",
-			usuario.Codigo, usuario.Nome, usuario.Data_ult_atu.Format("02/01/2006 15:04:05"))
-	}
-}
 
 func Usuario_Consultar_Codigo(codigo_usuario string) (models.Usuario, bool, error) {
 	var usuario models.Usuario
@@ -153,4 +137,41 @@ func Usuario_Consultar_Codigo(codigo_usuario string) (models.Usuario, bool, erro
 	}
 	fmt.Println("entrou 3")
 	return usuario, true, nil // Encontrou com sucesso
+}
+
+func Usuario_Consultar() ([]models.Usuario, error) {
+	db, err := Conectar()
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	// 1. Criamos a lista vazia
+	var usuarios []models.Usuario
+
+	// 2. Executamos a query (removendo o filtro fixo de ID se quiser todos)
+	//rows, err := db.Query("SELECT cod_usuario, nome_usuario, login_usuario, senha_usuario, email_usuario, tipo_usuario, data_ult_atu FROM usuarios")
+	rows, err := db.Query("SELECT * FROM usuarios")
+	if err != nil {
+		return nil, err
+	}
+
+	// 3. Iteramos pelos resultados
+	for rows.Next() {
+		var u models.Usuario
+
+		err := rows.Scan(&u.Codigo, &u.Nome, &u.Login, &u.Senha, &u.Email, &u.Tipo, &u.Data_ult_atu)
+		if err != nil {
+			return nil, err
+		}
+
+		usuarios = append(usuarios, u)
+	}
+
+	// 5. Verificamos se houve erro durante a iteração
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return usuarios, nil
 }
