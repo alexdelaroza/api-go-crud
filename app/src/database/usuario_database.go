@@ -1,7 +1,6 @@
 package database
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 
@@ -85,7 +84,7 @@ func Usuario_Atualizar(altera_usuario models.Usuario) (string, error) {
 	return mensagem, nil
 }
 
-func Usuario_Deletar() {
+func Usuario_Deletar(codigo_usuario string) (string, error) {
 	db, err := Conectar()
 	if err != nil {
 		log.Fatal("Erro ao conectar:", err)
@@ -96,13 +95,16 @@ func Usuario_Deletar() {
 
 	stmt, _ := db.Prepare(query)
 
-	res, _ := stmt.Exec(1) // cod_usuario
+	res, _ := stmt.Exec(codigo_usuario)
 
 	id, _ := res.LastInsertId()
 	fmt.Println(id)
 
 	linhas, _ := res.RowsAffected()
-	fmt.Printf("Sucesso! %d linha(s) afetada(s).\n", linhas)
+	// fmt.Sprintf cria a string formatada para ser retornada
+	mensagem := fmt.Sprintf("Sucesso! %d linha(s) afetada(s).", linhas)
+
+	return mensagem, nil
 }
 
 func Usuario_Consultar() {
@@ -131,21 +133,24 @@ func Usuario_Consultar_Codigo(codigo_usuario string) (models.Usuario, bool, erro
 	defer db.Close()
 
 	rows, err := db.Query("select * from usuarios where cod_usuario = ?", codigo_usuario)
-
-	for rows.Next() {
-		var usuario models.Usuario
-		rows.Scan(&usuario.Codigo, &usuario.Nome, &usuario.Login, &usuario.Senha, &usuario.Email, &usuario.Tipo, &usuario.Data_ult_atu)
-		//fmt.Printf("Usuário: %d - %s (Atualizado em: %s)\n",
-		//	usuario.Codigo, usuario.Nome, usuario.Data_ult_atu.Format("02/01/2006 15:04:05"))
+	if err != nil {
+		return usuario, false, err
 	}
+
+	if !rows.Next() {
+		fmt.Println("Nenhum registro encontrado para o código:", codigo_usuario)
+		return usuario, false, nil
+
+	}
+
+	err = rows.Scan(&usuario.Codigo, &usuario.Nome, &usuario.Login, &usuario.Senha, &usuario.Email, &usuario.Tipo, &usuario.Data_ult_atu)
+	fmt.Printf("Usuário: %s - %s (Atualizado em: %s)\n",
+		usuario.Codigo, usuario.Nome, usuario.Data_ult_atu.Format("02/01/2006 15:04:05"))
 
 	if err != nil {
-		if err == sql.ErrNoRows {
-			// Não encontrou, mas não é um "erro de sistema". Retorna falso.
-			return usuario, false, nil
-		}
+		fmt.Println("entrou 2")
 		return usuario, false, err // Erro real (conexão, sintaxe, etc)
 	}
-
+	fmt.Println("entrou 3")
 	return usuario, true, nil // Encontrou com sucesso
 }

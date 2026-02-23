@@ -9,11 +9,6 @@ import (
 )
 
 // TESTE
-func Consulta_Usuario(c *fiber.Ctx) error {
-	return c.SendString("Hello Consulta_Usuario, World 👋!")
-}
-
-// TESTE
 func Insere_Usuario(c *fiber.Ctx) error {
 	var data map[string]string
 	err := c.BodyParser(&data)
@@ -96,7 +91,7 @@ func Insere_Usuario(c *fiber.Ctx) error {
 	} else {
 		// Usuário existe. Não sera inserido...
 		var msg string
-		msg = fmt.Sprintf("Usuário %s encontrado. Continuando...\n", usuario.Nome)
+		msg = fmt.Sprintf("Usuário %s encontrado...", usuario.Codigo)
 		c.Status(400)
 		return c.JSON(fiber.Map{
 			"message": msg,
@@ -174,9 +169,9 @@ func Atualiza_Usuario(c *fiber.Ctx) error {
 	}
 
 	if !achou {
-		// Usuário existe. Não sera inserido...
+		// Usuário não existe. Não sera alterado...
 		var msg string
-		msg = fmt.Sprintf("Usuário %s encontrado. Continuando...\n", usuario.Nome)
+		msg = fmt.Sprintf("Usuário %s não encontrado...", usuario.Codigo)
 		c.Status(400)
 		return c.JSON(fiber.Map{
 			"message": msg,
@@ -184,7 +179,7 @@ func Atualiza_Usuario(c *fiber.Ctx) error {
 		})
 
 	} else {
-		// Usuário não existe. Seguindo para inserção...
+		// Usuário existe. Seguindo para alteração...
 		msg, err := database.Usuario_Atualizar(altera_usuario)
 
 		if err != nil {
@@ -204,35 +199,125 @@ func Atualiza_Usuario(c *fiber.Ctx) error {
 
 // TESTE
 func Deleta_Usuario(c *fiber.Ctx) error {
-	return c.SendString("Hello Deleta_Usuario, World 👋!")
+	var data map[string]string
+	err := c.BodyParser(&data)
+
+	if err != nil {
+		return err
+	}
+
+	// Valida Dados de Entrada
+	if data["codigo"] == "" {
+		c.Status(400)
+		return c.JSON(fiber.Map{
+			"message": "O campo 'codigo' é obrigatório e deve ser preenchido!",
+		})
+	}
+
+	var deleta_usuario models.Usuario
+	deleta_usuario.Codigo = data["codigo"]
+	deleta_usuario.Nome = data["nome"]
+	deleta_usuario.Login = data["login"]
+	deleta_usuario.Senha = data["senha"]
+	deleta_usuario.Email = data["email"]
+	deleta_usuario.Tipo = data["tipo"]
+
+	// Verificar se o Usuario ja existe no Cadastro
+	usuario, achou, err := database.Usuario_Consultar_Codigo(deleta_usuario.Codigo)
+	if err != nil {
+		return c.Status(500).SendString("Erro interno no banco")
+	}
+
+	if !achou {
+		// Usuário não existe. Não é possivel efetuar a exclusão...
+		var msg string
+		msg = fmt.Sprintf("Usuário %s não encontrado...", usuario.Codigo)
+		c.Status(400)
+		return c.JSON(fiber.Map{
+			"message": msg,
+			"user":    deleta_usuario, // Adiciona o objeto inteiro aqui
+		})
+
+	} else {
+		// Usuário existe. E sera efetuada a exclusão...
+		msg, err := database.Usuario_Deletar(deleta_usuario.Codigo)
+
+		if err != nil {
+			c.Status(500)
+			return c.JSON(fiber.Map{"error": err.Error()})
+		}
+
+		c.Status(201)
+		return c.JSON(fiber.Map{
+			"message": msg,
+			"user":    deleta_usuario, // Adiciona o objeto inteiro aqui
+		})
+	}
+
+	//return c.JSON(novo_usuario)
 }
 
 // TESTE
-func Consulta_Servico(c *fiber.Ctx) error {
-	return c.SendString("Hello Consulta_Servico, World 👋!")
+func Consulta_Usuario_Codigo(c *fiber.Ctx) error {
+	var data map[string]string
+	err := c.BodyParser(&data)
+
+	if err != nil {
+		return err
+	}
+
+	// Valida Dados de Entrada
+	if data["codigo"] == "" {
+		c.Status(400)
+		return c.JSON(fiber.Map{
+			"message": "O campo 'codigo' é obrigatório e deve ser preenchido!",
+		})
+	}
+
+	var consulta_usuario models.Usuario
+	consulta_usuario.Codigo = data["codigo"]
+	consulta_usuario.Nome = data["nome"]
+	consulta_usuario.Login = data["login"]
+	consulta_usuario.Senha = data["senha"]
+	consulta_usuario.Email = data["email"]
+	consulta_usuario.Tipo = data["tipo"]
+
+	// Verificar se o Usuario ja existe no Cadastro
+	usuario, achou, err := database.Usuario_Consultar_Codigo(consulta_usuario.Codigo)
+	if err != nil {
+		return c.Status(500).SendString("Erro interno no banco")
+	}
+
+	if !achou {
+		// Usuário não existe...
+		var msg string
+		msg = fmt.Sprintf("Usuário %s não encontrado...", usuario.Codigo)
+		c.Status(400)
+		return c.JSON(fiber.Map{
+			"message": msg,
+			"user":    usuario, // Adiciona o objeto inteiro aqui
+		})
+	} else {
+		// Usuário existe...
+		var msg string
+		msg = fmt.Sprintf("Usuário %s encontrado...", usuario.Codigo)
+		c.Status(201)
+		return c.JSON(fiber.Map{
+			"message": msg,
+			"user":    usuario, // Adiciona o objeto inteiro aqui
+		})
+	}
+
+	//return c.JSON(novo_usuario)
 }
 
 // TESTE
-func Insere_Servico(c *fiber.Ctx) error {
-	return c.SendString("Hello Insere_Servico, World 👋!")
-}
+func Consulta_Usuario(c *fiber.Ctx) error {
+	var msg string
+	c.Status(201)
+	return c.JSON(fiber.Map{
+		"message": msg,
+	})
 
-// TESTE
-func Atualiza_Servico(c *fiber.Ctx) error {
-	return c.SendString("Hello Atualiza_Servico, World 👋!")
-}
-
-// TESTE
-func Deleta_Servico(c *fiber.Ctx) error {
-	return c.SendString("Hello Deleta_Servico, World 👋!")
-}
-
-// TESTE
-func Consulta_Log(c *fiber.Ctx) error {
-	return c.SendString("Hello Consulta_Log, World 👋!")
-}
-
-// TESTE
-func Insere_Log(c *fiber.Ctx) error {
-	return c.SendString("Hello Insere_Log, World 👋!")
+	//return c.JSON(novo_usuario)
 }
