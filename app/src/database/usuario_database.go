@@ -119,7 +119,7 @@ func Usuario_Consultar() {
 	for rows.Next() {
 		var usuario models.Usuario
 		rows.Scan(&usuario.Codigo, &usuario.Nome, &usuario.Login, &usuario.Senha, &usuario.Email, &usuario.Tipo, &usuario.Data_ult_atu)
-		fmt.Printf("Usuário: %d - %s (Atualizado em: %s)\n",
+		fmt.Printf("Usuário: %s - %s (Atualizado em: %s)\n",
 			usuario.Codigo, usuario.Nome, usuario.Data_ult_atu.Format("02/01/2006 15:04:05"))
 	}
 }
