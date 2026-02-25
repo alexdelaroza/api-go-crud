@@ -8,11 +8,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// TESTE
+// CRUD - Usuarios
 func Insere_Usuario(c *fiber.Ctx) error {
 	var data map[string]string
 	err := c.BodyParser(&data)
-
 	if err != nil {
 		return err
 	}
@@ -102,7 +101,6 @@ func Insere_Usuario(c *fiber.Ctx) error {
 	//return c.JSON(novo_usuario)
 }
 
-// TESTE
 func Atualiza_Usuario(c *fiber.Ctx) error {
 	var data map[string]string
 	err := c.BodyParser(&data)
@@ -164,35 +162,20 @@ func Atualiza_Usuario(c *fiber.Ctx) error {
 	//return c.JSON(altera_usuario)
 }
 
-// TESTE
 func Deleta_Usuario(c *fiber.Ctx) error {
-	var data map[string]string
-	err := c.BodyParser(&data)
-	if err != nil {
-		return err
-	}
-
-	var id string
-	id = c.Params("id")
+	var codigo_usuario string
+	codigo_usuario = c.Params("id")
 
 	// Valida Dados de Entrada
-	if id == "" {
+	if codigo_usuario == "" {
 		c.Status(400)
 		return c.JSON(fiber.Map{
 			"message": "O campo 'codigo' é obrigatório e deve ser preenchido!",
 		})
 	}
 
-	var deleta_usuario models.Usuario
-	deleta_usuario.Codigo = id
-	deleta_usuario.Nome = data["nome"]
-	deleta_usuario.Login = data["login"]
-	deleta_usuario.Senha = data["senha"]
-	deleta_usuario.Email = data["email"]
-	deleta_usuario.Tipo = data["tipo"]
-
 	// Verificar se o Usuario ja existe no Cadastro
-	usuario, achou, err := database.Usuario_Consultar_Codigo(deleta_usuario.Codigo)
+	_, achou, err := database.Usuario_Consultar_Codigo(codigo_usuario)
 	if err != nil {
 		return c.Status(500).SendString("Erro interno no banco")
 	}
@@ -200,16 +183,16 @@ func Deleta_Usuario(c *fiber.Ctx) error {
 	if !achou {
 		// Usuário não existe. Não é possivel efetuar a exclusão...
 		var msg string
-		msg = fmt.Sprintf("Usuário %s não encontrado...", deleta_usuario.Codigo)
+		msg = fmt.Sprintf("Usuário %s não encontrado...", codigo_usuario)
 		c.Status(400)
 		return c.JSON(fiber.Map{
 			"message": msg,
-			"user":    deleta_usuario, // Adiciona o objeto inteiro aqui
+			"user":    codigo_usuario,
 		})
 
 	} else {
 		// Usuário existe. E sera efetuada a exclusão...
-		msg, err := database.Usuario_Deletar(usuario.Codigo)
+		msg, err := database.Usuario_Deletar(codigo_usuario)
 
 		if err != nil {
 			c.Status(500)
@@ -219,14 +202,12 @@ func Deleta_Usuario(c *fiber.Ctx) error {
 		c.Status(201)
 		return c.JSON(fiber.Map{
 			"message": msg,
-			"user":    usuario, // Adiciona o objeto inteiro aqui
+			"user":    codigo_usuario, 
 		})
 	}
 
-	//return c.JSON(novo_usuario)
 }
 
-// TESTE
 func Consulta_Usuario(c *fiber.Ctx) error {
 	lista, err := database.Usuario_Consultar()
 	if err != nil {
