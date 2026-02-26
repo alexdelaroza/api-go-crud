@@ -68,15 +68,14 @@ func Insere_Usuario(c *fiber.Ctx) error {
 	novo_usuario.Tipo = data["tipo"]
 
 	// Verificar se o Usuario ja existe no Cadastro
-	usuario, achou, err := database.Usuario_Consultar_Codigo(novo_usuario.Codigo)
+	usuario, achou, err, msg := database.Usuario_Consultar_Codigo(novo_usuario.Codigo)
 	if err != nil {
-		return c.Status(500).SendString("Erro interno no banco")
+		return c.Status(500).SendString(fmt.Sprintf("Erro interno no banco - %s", msg))
 	}
 
 	if !achou {
 		// Usuário não existe. Seguindo para inserção...
 		msg, err := database.Usuario_Inserir(novo_usuario)
-
 		if err != nil {
 			c.Status(500)
 			return c.JSON(fiber.Map{"error": err.Error()})
@@ -89,12 +88,10 @@ func Insere_Usuario(c *fiber.Ctx) error {
 		})
 	} else {
 		// Usuário existe. Não sera inserido...
-		var msg string
-		msg = fmt.Sprintf("Usuário %s encontrado...", usuario.Codigo)
 		c.Status(400)
 		return c.JSON(fiber.Map{
 			"message": msg,
-			"user":    novo_usuario, // Adiciona o objeto inteiro aqui
+			"user":    usuario, // Adiciona o objeto inteiro aqui
 		})
 	}
 
@@ -128,7 +125,7 @@ func Atualiza_Usuario(c *fiber.Ctx) error {
 	altera_usuario.Tipo = data["tipo"]
 
 	// Verificar se o Usuario ja existe no Cadastro
-	usuario, achou, err := database.Usuario_Consultar_Codigo(altera_usuario.Codigo)
+	usuario, achou, err, _ := database.Usuario_Consultar_Codigo(altera_usuario.Codigo)
 	if err != nil {
 		return c.Status(500).SendString("Erro interno no banco")
 	}
@@ -175,7 +172,7 @@ func Deleta_Usuario(c *fiber.Ctx) error {
 	}
 
 	// Verificar se o Usuario ja existe no Cadastro
-	_, achou, err := database.Usuario_Consultar_Codigo(codigo_usuario)
+	_, achou, err, _ := database.Usuario_Consultar_Codigo(codigo_usuario)
 	if err != nil {
 		return c.Status(500).SendString("Erro interno no banco")
 	}
@@ -202,32 +199,30 @@ func Deleta_Usuario(c *fiber.Ctx) error {
 		c.Status(201)
 		return c.JSON(fiber.Map{
 			"message": msg,
-			"user":    codigo_usuario, 
+			"user":    codigo_usuario,
 		})
 	}
 
 }
 
 func Consulta_Usuario(c *fiber.Ctx) error {
-	lista, err := database.Usuario_Consultar()
+	lista, err, msg := database.Usuario_Consultar()
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{"error": "Erro ao buscar usuários"})
+		return c.Status(500).JSON(fiber.Map{
+			"error": fmt.Sprintf("Erro no servidor: %s", msg),
+		})
 	}
 
-	c.Status(201)
 	// Retorna a lista completa de Usuarios Cadastrados como um array JSON
-	return c.JSON(lista)
+	c.Status(201)
+	return c.JSON(fiber.Map{
+		"message": msg,
+		"user":    lista, // Adiciona o objeto inteiro aqui
+	})
 
 }
 
 func Consulta_Usuario_Codigo(c *fiber.Ctx) error {
-	var data models.Usuario
-	err := c.BodyParser(&data)
-
-	if err != nil {
-		return err
-	}
-
 	var id string
 	id = c.Params("id")
 
@@ -240,30 +235,93 @@ func Consulta_Usuario_Codigo(c *fiber.Ctx) error {
 	}
 
 	// Verificar se o Usuario ja existe no Cadastro
-	usuario, achou, err := database.Usuario_Consultar_Codigo(id)
+	usuario, achou, err, msg := database.Usuario_Consultar_Codigo(id)
 	if err != nil {
-		return c.Status(500).SendString("Erro interno no banco")
+		return c.Status(500).SendString(fmt.Sprintf("Erro interno no banco - %s", msg))
 	}
 
 	if !achou {
 		// Usuário não existe...
-		var msg string
-		msg = fmt.Sprintf("Usuário %s não encontrado...", usuario.Codigo)
 		c.Status(400)
 		return c.JSON(fiber.Map{
 			"message": msg,
-			"user":    usuario, // Adiciona o objeto inteiro aqui
 		})
 	} else {
 		// Usuário existe...
-		var msg string
-		msg = fmt.Sprintf("Usuário %s encontrado...", usuario.Codigo)
 		c.Status(201)
 		return c.JSON(fiber.Map{
 			"message": msg,
 			"user":    usuario, // Adiciona o objeto inteiro aqui
 		})
 	}
+}
 
-	//return c.JSON(novo_usuario)
+// CRUD - Servico
+func Insere_Servico(c *fiber.Ctx) error {
+	return c.JSON(fiber.Map{
+		"message": "O campo 'tipo' é obrigatório e deve ser preenchido!",
+	})
+}
+
+func Atualiza_Servico(c *fiber.Ctx) error {
+	return c.JSON(fiber.Map{
+		"message": "O campo 'tipo' é obrigatório e deve ser preenchido!",
+	})
+}
+
+func Deleta_Servico(c *fiber.Ctx) error {
+	return c.JSON(fiber.Map{
+		"message": "O campo 'tipo' é obrigatório e deve ser preenchido!",
+	})
+}
+
+func Consulta_Servico(c *fiber.Ctx) error {
+	lista, err, msg := database.Servico_Consultar()
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"error": fmt.Sprintf("Erro no servidor: %s", msg),
+		})
+	}
+
+	c.Status(201)
+	// Retorna a lista completa de serviços Cadastrados como um array JSON
+	return c.JSON(lista)
+}
+
+func Consulta_Servico_Codigo(c *fiber.Ctx) error {
+	var id string
+	id = c.Params("id")
+
+	// Valida Dados de Entrada
+	if id == "" {
+		c.Status(400)
+		return c.JSON(fiber.Map{
+			"message": "O campo 'codigo' é obrigatório e deve ser preenchido!",
+		})
+	}
+
+	// Verificar se o Servico existe no Cadastro
+	servico, achou, err := database.Servico_Consultar_Codigo(id)
+	if err != nil {
+		return c.Status(500).SendString("Erro interno no banco")
+	}
+
+	if !achou {
+		// Servico não existe...
+		var msg string
+		msg = fmt.Sprintf("Servico %s não encontrado...", servico.Codigo)
+		c.Status(400)
+		return c.JSON(fiber.Map{
+			"message": msg,
+		})
+	} else {
+		// Servico existe...
+		var msg string
+		msg = fmt.Sprintf("Servico %s encontrado...", servico.Codigo)
+		c.Status(201)
+		return c.JSON(fiber.Map{
+			"message": msg,
+			"user":    servico, // Adiciona o objeto inteiro aqui
+		})
+	}
 }

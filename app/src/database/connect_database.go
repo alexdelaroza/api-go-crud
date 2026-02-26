@@ -6,7 +6,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-// Conectar - abre aconexão com o banco de dados
+// Abre aconexão com o banco de dados
 func Conectar() (*sql.DB, error) {
 	stringConexao := "root:root@/cursogo?parseTime=True"
 
