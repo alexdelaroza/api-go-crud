@@ -7,6 +7,91 @@ import (
 )
 
 // Servicos
+func Servico_Inserir(novo_servico models.Servico) (string, error) {
+	var msg string
+
+	db, err := Conectar()
+	if err != nil {
+		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
+		return msg, err
+	}
+	defer db.Close()
+
+	query := `INSERT INTO servico (
+                        , codigo_servico
+                        , descricao_servico
+						, valor_servico
+                 ) VALUES (?, ?, ?)`
+
+	stmt, _ := db.Prepare(query)
+
+	res, err := stmt.Exec(novo_servico.Codigo, novo_servico.Descricao, novo_servico.Valor)
+
+	id, _ := res.LastInsertId()
+	fmt.Println(id)
+
+	linhas, _ := res.RowsAffected()
+
+	// fmt.Sprintf cria a string formatada
+	msg = fmt.Sprintf("Sucesso! %d linha(s) inserida(s).", linhas)
+	return msg, nil
+}
+
+func Servico_Atualizar(altera_servico models.Servico) (string, error) {
+	var msg string
+
+	db, err := Conectar()
+	if err != nil {
+		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
+		return msg, err
+	}
+	defer db.Close()
+
+	query := `update  servico 
+	            set   descricao_servico = ? 
+				  ,   valor_servico     = ?
+                where cod_servico       = ?`
+
+	stmt, _ := db.Prepare(query)
+
+	res, err := stmt.Exec(altera_servico.Descricao, altera_servico.Valor, altera_servico.Codigo)
+
+	id, _ := res.LastInsertId()
+	fmt.Println(id)
+
+	linhas, _ := res.RowsAffected()
+
+	// fmt.Sprintf cria a string formatada para ser retornada
+	msg = fmt.Sprintf("Sucesso! %d linha(s) afetada(s).", linhas)
+	return msg, nil
+}
+
+func Servico_Deletar(codigo_servico string) (string, error) {
+	var msg string
+
+	db, err := Conectar()
+	if err != nil {
+		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
+		return msg, err
+	}
+	defer db.Close()
+
+	query := `delete from servico where cod_servico = ?`
+
+	stmt, _ := db.Prepare(query)
+
+	res, _ := stmt.Exec(codigo_servico)
+
+	id, _ := res.LastInsertId()
+	fmt.Println(id)
+
+	linhas, _ := res.RowsAffected()
+
+	// fmt.Sprintf cria a string formatada
+	msg = fmt.Sprintf("Sucesso! %d linha(s) deletada(s).", linhas)
+	return msg, nil
+}
+
 func Servico_Consultar() ([]models.Servico, error, string) {
 	var msg string
 
@@ -50,8 +135,8 @@ func Servico_Consultar_Codigo(codigo_servico string) (models.Servico, bool, erro
 	var servico models.Servico
 	db, err := Conectar()
 	if err != nil {
-		fmt.Println("erro 1")
-		return servico, false, err, err.Error()
+		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
+		return servico, false, err, msg
 	}
 	defer db.Close()
 

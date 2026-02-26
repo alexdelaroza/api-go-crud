@@ -140,8 +140,8 @@ func Usuario_Consultar_Codigo(codigo_usuario string) (models.Usuario, bool, erro
 
 	db, err := Conectar()
 	if err != nil {
-		fmt.Println("erro 1")
-		return usuario, false, err, err.Error()
+		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
+		return usuario, false, err, msg
 	}
 	defer db.Close()
 
@@ -161,7 +161,6 @@ func Usuario_Consultar_Codigo(codigo_usuario string) (models.Usuario, bool, erro
 	err = rows.Scan(&usuario.Codigo, &usuario.Nome, &usuario.Login, &usuario.Senha, &usuario.Email, &usuario.Tipo, &usuario.Data_ult_atu)
 	if err != nil {
 		// Erro real
-		fmt.Println("erro 2")
 		return usuario, false, err, err.Error()
 	}
 
@@ -170,4 +169,3 @@ func Usuario_Consultar_Codigo(codigo_usuario string) (models.Usuario, bool, erro
 	msg = "Sucesso - Consulta efetuada"
 	return usuario, true, nil, msg
 }
-

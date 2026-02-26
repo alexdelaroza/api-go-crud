@@ -8,10 +8,6 @@ import (
 
 func main() {
 	//database.Create_table()
-	//database.Usuario_Deletar()
-	//database.Usuario_Inserir()
-	//database.Usuario_Atualizar()
-	//database.Usuario_Consultar()
 
 	// cria a instancia do WEB server
 	app := fiber.New()
