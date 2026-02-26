@@ -167,7 +167,8 @@ func Usuario_Consultar_Codigo(codigo_usuario string) (models.Usuario, bool, erro
 
 	fmt.Println("achou 3")
 	// Sucesso - Encontrou
-	msg = fmt.Sprintf("Sucesso - Usuário %s encontrado", codigo_usuario)
+	msg = fmt.Sprintf("Sucesso - Usuário: %s - %s encontrado (Atualizado em: %s)\n",
+		usuario.Codigo, usuario.Nome, usuario.Data_ult_atu.Format("02/01/2006 15:04:05"))
 	return usuario, true, nil, msg
 }
 
@@ -209,12 +210,14 @@ func Servico_Consultar() ([]models.Servico, error, string) {
 	return servicos, nil, msg
 }
 
-func Servico_Consultar_Codigo(codigo_servico string) (models.Servico, bool, error) {
+func Servico_Consultar_Codigo(codigo_servico string) (models.Servico, bool, error, string) {
+	var msg string
+
 	var servico models.Servico
 	db, err := Conectar()
 	if err != nil {
 		fmt.Println("erro 1")
-		return servico, false, err
+		return servico, false, err, err.Error()
 	}
 	defer db.Close()
 
@@ -222,24 +225,25 @@ func Servico_Consultar_Codigo(codigo_servico string) (models.Servico, bool, erro
 
 	rows, err := db.Query(query, codigo_servico)
 	if err != nil {
-		return servico, false, err
+		return servico, false, err, err.Error()
 	}
 	defer rows.Close()
 
 	if !rows.Next() {
-		fmt.Println("Nenhum registro encontrado para o código:", codigo_servico)
-		return servico, false, nil
+		msg = fmt.Sprintf("Nenhum registro encontrado para o código:", codigo_servico)
+		return servico, false, nil, msg
 	}
 
 	err = rows.Scan(&servico.Codigo, &servico.Descricao, &servico.Valor, &servico.Data_ult_atu)
-	//fmt.Printf("Servico: %s - %s (Atualizado em: %s)\n",
-	//	servico.Codigo, servico.Descricao, servico.Data_ult_atu.Format("02/01/2006 15:04:05"))
 
 	if err != nil {
 		fmt.Println("entrou 2")
-		return servico, false, err // Erro real
+		return servico, false, err, err.Error() // Erro real
 	}
 
 	fmt.Println("entrou 3")
-	return servico, true, nil // Encontrou com sucesso
+	// Sucesso - Encontrou
+	msg = fmt.Sprintf("Sucesso - Servico: %s - %s encontrado (Atualizado em: %s)\n",
+		servico.Codigo, servico.Descricao, servico.Data_ult_atu.Format("02/01/2006 15:04:05"))
+	return servico, true, nil, msg
 }
