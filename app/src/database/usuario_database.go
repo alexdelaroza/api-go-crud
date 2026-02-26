@@ -229,7 +229,7 @@ func Servico_Consultar_Codigo(codigo_servico string) (models.Servico, bool, erro
 	defer rows.Close()
 
 	if !rows.Next() {
-		msg = fmt.Sprintf("Nenhum registro encontrado para o código:", codigo_servico)
+		msg = fmt.Sprintf("Nenhum registro encontrado para o código: %s ", codigo_servico)
 		return servico, false, nil, msg
 	}
 
