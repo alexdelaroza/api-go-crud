@@ -94,8 +94,6 @@ func Insere_Usuario(c *fiber.Ctx) error {
 			"user":    usuario, // Adiciona o objeto inteiro aqui
 		})
 	}
-
-	//return c.JSON(novo_usuario)
 }
 
 func Atualiza_Usuario(c *fiber.Ctx) error {
@@ -125,15 +123,13 @@ func Atualiza_Usuario(c *fiber.Ctx) error {
 	altera_usuario.Tipo = data["tipo"]
 
 	// Verificar se o Usuario ja existe no Cadastro
-	usuario, achou, err, _ := database.Usuario_Consultar_Codigo(altera_usuario.Codigo)
+	usuario, achou, err, msg := database.Usuario_Consultar_Codigo(altera_usuario.Codigo)
 	if err != nil {
 		return c.Status(500).SendString("Erro interno no banco")
 	}
 
 	if !achou {
 		// Usuário não existe. Não sera alterado...
-		var msg string
-		msg = fmt.Sprintf("Usuário %s não encontrado...", altera_usuario.Codigo)
 		c.Status(400)
 		return c.JSON(fiber.Map{
 			"message": msg,
@@ -155,8 +151,6 @@ func Atualiza_Usuario(c *fiber.Ctx) error {
 			"user":    altera_usuario, // Adiciona o objeto inteiro aqui
 		})
 	}
-
-	//return c.JSON(altera_usuario)
 }
 
 func Deleta_Usuario(c *fiber.Ctx) error {
@@ -172,25 +166,21 @@ func Deleta_Usuario(c *fiber.Ctx) error {
 	}
 
 	// Verificar se o Usuario ja existe no Cadastro
-	_, achou, err, _ := database.Usuario_Consultar_Codigo(codigo_usuario)
+	_, achou, err, msg := database.Usuario_Consultar_Codigo(codigo_usuario)
 	if err != nil {
 		return c.Status(500).SendString("Erro interno no banco")
 	}
 
 	if !achou {
 		// Usuário não existe. Não é possivel efetuar a exclusão...
-		var msg string
-		msg = fmt.Sprintf("Usuário %s não encontrado...", codigo_usuario)
 		c.Status(400)
 		return c.JSON(fiber.Map{
 			"message": msg,
 			"user":    codigo_usuario,
 		})
-
 	} else {
 		// Usuário existe. E sera efetuada a exclusão...
 		msg, err := database.Usuario_Deletar(codigo_usuario)
-
 		if err != nil {
 			c.Status(500)
 			return c.JSON(fiber.Map{"error": err.Error()})
@@ -202,7 +192,6 @@ func Deleta_Usuario(c *fiber.Ctx) error {
 			"user":    codigo_usuario,
 		})
 	}
-
 }
 
 func Consulta_Usuario(c *fiber.Ctx) error {
