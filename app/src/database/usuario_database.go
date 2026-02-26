@@ -167,8 +167,7 @@ func Usuario_Consultar_Codigo(codigo_usuario string) (models.Usuario, bool, erro
 
 	fmt.Println("achou 3")
 	// Sucesso - Encontrou
-	msg = fmt.Sprintf("Sucesso - Usuário: %s - %s encontrado (Atualizado em: %s)\n",
-		usuario.Codigo, usuario.Nome, usuario.Data_ult_atu.Format("02/01/2006 15:04:05"))
+	msg = "Sucesso - Consulta efetuada"
 	return usuario, true, nil, msg
 }
 
@@ -243,7 +242,6 @@ func Servico_Consultar_Codigo(codigo_servico string) (models.Servico, bool, erro
 
 	fmt.Println("entrou 3")
 	// Sucesso - Encontrou
-	msg = fmt.Sprintf("Sucesso - Servico: %s - %s encontrado (Atualizado em: %s)\n",
-		servico.Codigo, servico.Descricao, servico.Data_ult_atu.Format("02/01/2006 15:04:05"))
+	msg = "Sucesso - Consulta efetuada"
 	return servico, true, nil, msg
 }

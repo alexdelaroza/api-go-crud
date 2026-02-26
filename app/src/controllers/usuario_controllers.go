@@ -234,7 +234,6 @@ func Consulta_Usuario_Codigo(c *fiber.Ctx) error {
 		})
 	}
 
-	// Verificar se o Usuario ja existe no Cadastro
 	usuario, achou, err, msg := database.Usuario_Consultar_Codigo(id)
 	if err != nil {
 		return c.Status(500).SendString(fmt.Sprintf("Erro interno no banco - %s", msg))
@@ -300,24 +299,19 @@ func Consulta_Servico_Codigo(c *fiber.Ctx) error {
 		})
 	}
 
-	// Verificar se o Servico existe no Cadastro
-	servico, achou, err := database.Servico_Consultar_Codigo(id)
+	servico, achou, err, msg := database.Servico_Consultar_Codigo(id)
 	if err != nil {
-		return c.Status(500).SendString("Erro interno no banco")
+		return c.Status(500).SendString(fmt.Sprintf("Erro interno no banco - %s", msg))
 	}
 
 	if !achou {
 		// Servico não existe...
-		var msg string
-		msg = fmt.Sprintf("Servico %s não encontrado...", servico.Codigo)
 		c.Status(400)
 		return c.JSON(fiber.Map{
 			"message": msg,
 		})
 	} else {
 		// Servico existe...
-		var msg string
-		msg = fmt.Sprintf("Servico %s encontrado...", servico.Codigo)
 		c.Status(201)
 		return c.JSON(fiber.Map{
 			"message": msg,
