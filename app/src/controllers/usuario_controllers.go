@@ -81,7 +81,7 @@ func Insere_Usuario(c *fiber.Ctx) error {
 			return c.JSON(fiber.Map{"error": err.Error()})
 		}
 
-		c.Status(201)
+		c.Status(fiber.StatusCreated)
 		return c.JSON(fiber.Map{
 			"message": msg,
 			"user":    novo_usuario, // Adiciona o objeto inteiro aqui
@@ -145,7 +145,7 @@ func Atualiza_Usuario(c *fiber.Ctx) error {
 			return c.JSON(fiber.Map{"error": err.Error()})
 		}
 
-		c.Status(201)
+		c.Status(fiber.StatusOK)
 		return c.JSON(fiber.Map{
 			"message": msg,
 			"user":    altera_usuario, // Adiciona o objeto inteiro aqui
@@ -186,7 +186,7 @@ func Deleta_Usuario(c *fiber.Ctx) error {
 			return c.JSON(fiber.Map{"error": err.Error()})
 		}
 
-		c.Status(201)
+		c.Status(fiber.StatusOK)
 		return c.JSON(fiber.Map{
 			"message": msg,
 			"user":    codigo_usuario,
@@ -203,12 +203,11 @@ func Consulta_Usuario(c *fiber.Ctx) error {
 	}
 
 	// Retorna a lista completa de Usuarios Cadastrados como um array JSON
-	c.Status(201)
+	c.Status(fiber.StatusOK)
 	return c.JSON(fiber.Map{
 		"message": msg,
-		"user":    lista, // Adiciona o objeto inteiro aqui
+		"user":    lista,
 	})
-
 }
 
 func Consulta_Usuario_Codigo(c *fiber.Ctx) error {
@@ -236,7 +235,7 @@ func Consulta_Usuario_Codigo(c *fiber.Ctx) error {
 		})
 	} else {
 		// Usuário existe...
-		c.Status(201)
+		c.Status(fiber.StatusOK)
 		return c.JSON(fiber.Map{
 			"message": msg,
 			"user":    usuario, // Adiciona o objeto inteiro aqui
@@ -271,9 +270,12 @@ func Consulta_Servico(c *fiber.Ctx) error {
 		})
 	}
 
-	c.Status(201)
 	// Retorna a lista completa de serviços Cadastrados como um array JSON
-	return c.JSON(lista)
+	c.Status(fiber.StatusOK)
+	return c.JSON(fiber.Map{
+		"message": msg,
+		"user":    lista,
+	})
 }
 
 func Consulta_Servico_Codigo(c *fiber.Ctx) error {
@@ -301,7 +303,7 @@ func Consulta_Servico_Codigo(c *fiber.Ctx) error {
 		})
 	} else {
 		// Servico existe...
-		c.Status(201)
+		c.Status(fiber.StatusOK)
 		return c.JSON(fiber.Map{
 			"message": msg,
 			"user":    servico, // Adiciona o objeto inteiro aqui
