@@ -141,14 +141,14 @@ func Deleta_Servico(c *fiber.Ctx) error {
 	}
 
 	if !achou {
-		// Usuário não existe. Não é possivel efetuar a exclusão...
+		// Servico não existe. Não é possivel efetuar a exclusão...
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{
 			"message": msg,
 			"user":    id,
 		})
 	} else {
-		// Usuário existe. E sera efetuada a exclusão...
+		// Servico existe -> exclusão...
 		msg, err := database.Servico_Deletar(id)
 		if err != nil {
 			c.Status(fiber.StatusInternalServerError)
