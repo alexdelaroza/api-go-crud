@@ -18,19 +18,31 @@ func Servico_Inserir(novo_servico models.Servico) (string, error) {
 	defer db.Close()
 
 	query := `INSERT INTO servico (
-                        , codigo_servico
+                          cod_servico
                         , descricao_servico
 						, valor_servico
                  ) VALUES (?, ?, ?)`
 
-	stmt, _ := db.Prepare(query)
+	stmt, err := db.Prepare(query)
+	if err != nil {
+		msg = fmt.Sprintf("Erro ao preparar a query: %s", err.Error())
+		return msg, err
+	}
 
 	res, err := stmt.Exec(novo_servico.Codigo, novo_servico.Descricao, novo_servico.Valor)
+	if err != nil {
+		msg = fmt.Sprintf("Erro ao executar a insercao: %s", err.Error())
+		return msg, err
+	}
 
-	id, _ := res.LastInsertId()
+	id, err := res.LastInsertId()
 	fmt.Println(id)
 
-	linhas, _ := res.RowsAffected()
+	linhas, err := res.RowsAffected()
+	if err != nil {
+		msg = fmt.Sprintf("Erro ao validar linhas afetadas: %s", err.Error())
+		return msg, err
+	}
 
 	// fmt.Sprintf cria a string formatada
 	msg = fmt.Sprintf("Sucesso! %d linha(s) inserida(s).", linhas)
@@ -156,12 +168,10 @@ func Servico_Consultar_Codigo(codigo_servico string) (models.Servico, bool, erro
 	err = rows.Scan(&servico.Codigo, &servico.Descricao, &servico.Valor, &servico.Data_ult_atu)
 
 	if err != nil {
-		fmt.Println("entrou 2")
 		return servico, false, err, err.Error() // Erro real
 	}
 
-	fmt.Println("entrou 3")
 	// Sucesso - Encontrou
-	msg = "Sucesso - Consulta efetuada"
+	msg = fmt.Sprintf("Sucesso - Servico %s encontrado com sucesso", servico.Codigo)
 	return servico, true, nil, msg
 }

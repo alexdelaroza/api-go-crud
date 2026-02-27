@@ -164,8 +164,7 @@ func Usuario_Consultar_Codigo(codigo_usuario string) (models.Usuario, bool, erro
 		return usuario, false, err, err.Error()
 	}
 
-	fmt.Println("achou 3")
 	// Sucesso - Encontrou
-	msg = "Sucesso - Consulta efetuada"
+	msg = fmt.Sprintf("Sucesso - Usuario %s encontrado com sucesso", usuario.Codigo)
 	return usuario, true, nil, msg
 }
