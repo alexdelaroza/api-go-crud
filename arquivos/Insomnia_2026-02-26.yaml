@@ -1,0 +1,312 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: API-GO-CRUD
+meta:
+  id: wrk_0cca8637a149455c96879e4fef409c74
+  created: 1771790973054
+  modified: 1771791014301
+  description: ""
+collection:
+  - name: Servico
+    meta:
+      id: fld_09d042ebb148459087af420c97137fb0
+      created: 1772150062244
+      modified: 1772150062244
+      sortKey: -1772150062244
+      description: ""
+    children:
+      - url: http://localhost:3000/servico/5
+        name: servico-atualizar
+        meta:
+          id: req_a2f2f26c5bce4e17a1b7b9017b65a392
+          created: 1772149092957
+          modified: 1772150091072
+          isPrivate: false
+          description: ""
+          sortKey: -1772150067535
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            { 
+              "descricao": "servico_005",
+              "valor": 51.00 
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/servico
+        name: servico-inserir
+        meta:
+          id: req_1daaee94376548b48d4d314674298487
+          created: 1772151357637
+          modified: 1772151941955
+          isPrivate: false
+          description: ""
+          sortKey: -1772151357637
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            { 
+            	"codigo": "4",
+              "descricao": "servico_004",
+              "valor": 41.00 
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/servico
+        name: servico-consulta
+        meta:
+          id: req_9c0748318c3f43b7aff28743232be878
+          created: 1772154854505
+          modified: 1772154886657
+          isPrivate: false
+          description: ""
+          sortKey: -1772150067435
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/servico/1
+        name: servico-consulta-codigo
+        meta:
+          id: req_a6db9da39b40427d802d511307b13caf
+          created: 1772154928152
+          modified: 1772154968668
+          isPrivate: false
+          description: ""
+          sortKey: -1772150067335
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/servico/5
+        name: servico-deleta
+        meta:
+          id: req_d3eeefe81a52495da58fde6a4cc7f6ef
+          created: 1772154998986
+          modified: 1772155043523
+          isPrivate: false
+          description: ""
+          sortKey: -1772150067485
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Usuario
+    meta:
+      id: fld_c663b868d7b2494a81b35868aa8638e0
+      created: 1772150105804
+      modified: 1772150105804
+      sortKey: -1772150105804
+      description: ""
+    children:
+      - url: http://localhost:3000/usuario
+        name: usuario-inserir
+        meta:
+          id: req_2bffa46c576b45daafb26cee2b2f402a
+          created: 1771790973112
+          modified: 1772151069864
+          isPrivate: false
+          description: ""
+          sortKey: -1772150117446
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            { 
+            "codigo": "6",
+            "nome": "marcela nobrega",
+            "login": "marcelanobrega",
+            "senha": "123",
+            "email": "marcelanobrega@gmail.com",
+            "tipo": "admin"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/usuario/3
+        name: usuario-atualiza
+        meta:
+          id: req_8dcf39b96cb7487c8abc12efbba89d9f
+          created: 1771809192731
+          modified: 1772150573557
+          isPrivate: false
+          description: ""
+          sortKey: -1772150117396
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            { 
+            "nome": "neuza delaroza",
+            "login": "neuzadelaroza",
+            "senha": "123",
+            "email": "neuza.delaroza@gmail.com",
+            "tipo": "user"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/usuario/3
+        name: usuario-deleta
+        meta:
+          id: req_52ebd6f424bb4d0d97e3062c72b2e43c
+          created: 1771810526594
+          modified: 1772155064896
+          isPrivate: false
+          description: ""
+          sortKey: -1772150117346
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/usuario/1
+        name: usuario-consulta-codigo
+        meta:
+          id: req_ce97129eb7904f07b9de4273de15600f
+          created: 1771814132635
+          modified: 1772154917656
+          isPrivate: false
+          description: ""
+          sortKey: -1772150117246
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/usuario
+        name: usuario-consulta
+        meta:
+          id: req_1256f2cf004e45819fce27649c3d4cd8
+          created: 1771860378317
+          modified: 1772154908425
+          isPrivate: false
+          description: ""
+          sortKey: -1772150117296
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_aa5ef0cea742a59c0c91dc110fc49d4a30adf43d
+    created: 1771790973057
+    modified: 1771790973057
+environments:
+  name: Base Environment
+  meta:
+    id: env_aa5ef0cea742a59c0c91dc110fc49d4a30adf43d
+    created: 1771790973055
+    modified: 1771790973055
+    isPrivate: false
