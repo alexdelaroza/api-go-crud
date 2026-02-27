@@ -1,4 +1,0 @@
-[ ] verifica o email se ja existe cadastrado quando for inserir ou atualizar
-[ ] atualizar os status com o fiber - c.Status(fiber.StatusOK)
-[ ]
-[ ] 

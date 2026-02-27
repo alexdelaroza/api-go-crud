@@ -26,14 +26,26 @@ func Usuario_Inserir(novo_usuario models.Usuario) (string, error) {
 						  tipo_usuario
                  ) VALUES (?, ?, ?, ?, ?, ?)`
 
-	stmt, _ := db.Prepare(query)
+	stmt, err := db.Prepare(query)
+	if err != nil {
+		msg = fmt.Sprintf("Erro ao preparar a query: %s", err.Error())
+		return msg, err
+	}
 
 	res, err := stmt.Exec(novo_usuario.Codigo, novo_usuario.Nome, novo_usuario.Login, novo_usuario.Senha, novo_usuario.Email, novo_usuario.Tipo)
+	if err != nil {
+		msg = fmt.Sprintf("Erro ao executar a insercao: %s", err.Error())
+		return msg, err
+	}
 
-	id, _ := res.LastInsertId()
+	id, err := res.LastInsertId()
 	fmt.Println(id)
 
-	linhas, _ := res.RowsAffected()
+	linhas, err := res.RowsAffected()
+	if err != nil {
+		msg = fmt.Sprintf("Erro ao validar linhas afetadas: %s", err.Error())
+		return msg, err
+	}
 
 	// fmt.Sprintf cria a string formatada
 	msg = fmt.Sprintf("Sucesso! %d linha(s) inserida(s).", linhas)
