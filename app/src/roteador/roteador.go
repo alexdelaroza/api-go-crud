@@ -20,4 +20,7 @@ func Setup(app *fiber.App) {
 	app.Delete("/servico/:id", controllers.Deleta_Servico)
 	app.Get("/servico", controllers.Consulta_Servico)
 	app.Get("/servico/:id", controllers.Consulta_Servico_Codigo)
+
+	// Log
+	app.Get("/log/:id", controllers.Consulta_Log_Codigo)
 }
