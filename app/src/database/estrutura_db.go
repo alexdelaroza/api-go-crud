@@ -49,7 +49,7 @@ func Create_table() {
 	exec(db, `create table log (
              cod_log VARCHAR(36),
              descricao_log TEXT NOT NULL,
-             cod_recurso INT NOT NULL,
+             cod_recurso VARCHAR(36) NOT NULL,
              criado_por_log VARCHAR(250) NOT NULL,
              data_ult_atu_log TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
              PRIMARY KEY (cod_log)

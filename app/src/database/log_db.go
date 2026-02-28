@@ -8,7 +8,7 @@ import (
 )
 
 // Log
-func Log_Inserir(novo_log models.Log) (string, error) {
+func Log_Inserir(input_log models.Log_input) (string, error) {
 	var msg string
 
 	db, err := Conectar()
@@ -28,7 +28,9 @@ func Log_Inserir(novo_log models.Log) (string, error) {
 	defer rows.Close()
 
 	rows.Scan(&ultimoID)
-	novo_log.Codigo = strconv.Itoa(ultimoID + 1)
+
+	var Codigo string
+	Codigo = strconv.Itoa(ultimoID + 1)
 
 	// Busca efetua a insercao
 	query := `INSERT INTO log (
@@ -44,7 +46,7 @@ func Log_Inserir(novo_log models.Log) (string, error) {
 		return msg, err
 	}
 
-	res, err := stmt.Exec(novo_log.Codigo, novo_log.Descricao, novo_log.Codigo_recurso, novo_log.Criado_por)
+	res, err := stmt.Exec(Codigo, input_log.Descricao, input_log.Codigo_recurso, input_log.Criado_por)
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao executar a insercao: %s", err.Error())
 		return msg, err
@@ -64,10 +66,10 @@ func Log_Inserir(novo_log models.Log) (string, error) {
 	return msg, nil
 }
 
-func Log_Consultar_Codigo(codigo_recurso string) (models.Log, bool, error, string) {
+func Log_Consultar_Codigo(codigo_recurso string) (models.Log_output, bool, error, string) {
 	var msg string
 
-	var log models.Log
+	var log models.Log_output
 	db, err := Conectar()
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
@@ -75,6 +77,7 @@ func Log_Consultar_Codigo(codigo_recurso string) (models.Log, bool, error, strin
 	}
 	defer db.Close()
 
+	log.Codigo_recurso = codigo_recurso
 	query := "SELECT cod_log, descricao_log, criado_por_log, data_ult_atu_servico FROM servico WHERE cod_recurso = ?"
 
 	rows, err := db.Query(query, codigo_recurso)
@@ -88,7 +91,7 @@ func Log_Consultar_Codigo(codigo_recurso string) (models.Log, bool, error, strin
 		return log, false, nil, msg
 	}
 
-	err = rows.Scan(&log.Codigo, &log.Descricao, &log.Criado_por, &log.Data_ult_atu)
+	err = rows.Scan(&log.Codigo, &log.Descricao, &log.Criado_por, &log.Data_ult_atu, &log.Codigo_recurso)
 	if err != nil {
 		return log, false, err, err.Error() // Erro real
 	}
