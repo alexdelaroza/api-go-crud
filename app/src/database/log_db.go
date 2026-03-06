@@ -31,8 +31,8 @@ func Log_Inserir(input_log models.Log_input) (string, error) {
 
 	var Codigo string
 	Codigo = strconv.Itoa(ultimoID + 1)
+	fmt.Println(Codigo)
 
-	// Busca efetua a insercao
 	query := `INSERT INTO log (
                           cod_log
                         , descricao_log
@@ -78,7 +78,7 @@ func Log_Consultar_Codigo(codigo_recurso string) (models.Log_output, bool, error
 	defer db.Close()
 
 	log.Codigo_recurso = codigo_recurso
-	query := "SELECT cod_log, descricao_log, criado_por_log, data_ult_atu_servico FROM servico WHERE cod_recurso = ?"
+	query := "SELECT cod_log, descricao_log, criado_por_log, data_ult_atu_log FROM log WHERE cod_recurso = ?"
 
 	rows, err := db.Query(query, codigo_recurso)
 	if err != nil {

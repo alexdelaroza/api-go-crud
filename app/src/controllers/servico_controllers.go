@@ -56,6 +56,22 @@ func Insere_Servico(c *fiber.Ctx) error {
 			return c.JSON(fiber.Map{"error": err.Error()})
 		}
 
+		// log -> INSERIR
+		var novo_log models.Log_input
+		novo_log.Codigo_recurso = "1"
+		novo_log.Criado_por = "1"
+		novo_log.Descricao = "inserção de novo serviço"
+
+		msg, err = database.Log_Inserir(novo_log)
+		if err != nil {
+			c.Status(fiber.StatusInternalServerError)
+			return c.JSON(fiber.Map{
+				"message": msg,
+				"error":   err.Error(),
+			})
+		}
+		// log -> INSERIR
+
 		c.Status(fiber.StatusCreated)
 		return c.JSON(fiber.Map{
 			"message": msg,
