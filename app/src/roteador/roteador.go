@@ -22,5 +22,6 @@ func Setup(app *fiber.App) {
 	app.Get("/servico/:id", controllers.Consulta_Servico_Codigo)
 
 	// Log
-	app.Get("/log/:id", controllers.Consulta_Log_Codigo)
+	app.Get("/log", controllers.Consulta_Log)
+	// app.Get("/log/:data", controllers.Consulta_Log_Data)
 }
