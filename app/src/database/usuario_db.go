@@ -213,6 +213,39 @@ func Usuario_Consultar_Email(email_usuario string) (bool, string, error) {
 	return true, msg, nil
 }
 
+func Usuario_Consultar_Login(login_usuario string) (bool, string, error) {
+	var msg string
+
+	db, err := Conectar()
+	if err != nil {
+		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
+		return false, msg, err
+	}
+	defer db.Close()
+
+	query := "SELECT * FROM usuarios WHERE login = ?"
+
+	rows, err := db.Query(query, login_usuario)
+	if err != nil {
+		return false, err.Error(), err
+	}
+	defer rows.Close()
+
+	if !rows.Next() {
+		msg = fmt.Sprintf("Nenhum registro encontrado para o login: %s ", login_usuario)
+		return false, msg, nil
+	}
+
+	// err = rows.Scan(&codigo)
+	// if err != nil {
+	// 	return false, err.Error(), err // Erro real
+	// }
+
+	// Sucesso - Encontrou
+	msg = fmt.Sprintf("Login: %s cadastrado", login_usuario)
+	return true, msg, nil
+}
+
 func Usuario_ultimo_id() (bool, string, error) {
 	var ultimoID, msg string
 
