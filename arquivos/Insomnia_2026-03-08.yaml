@@ -52,7 +52,7 @@ collection:
         meta:
           id: req_1daaee94376548b48d4d314674298487
           created: 1772151357637
-          modified: 1772151941955
+          modified: 1773000111291
           isPrivate: false
           description: ""
           sortKey: -1772151357637
@@ -61,9 +61,8 @@ collection:
           mimeType: application/json
           text: |-
             { 
-            	"codigo": "4",
-              "descricao": "servico_004",
-              "valor": 41.00 
+              "descricao": "servico_005",
+              "valor": 501.00 
             }
         headers:
           - name: Content-Type
@@ -126,12 +125,12 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: http://localhost:3000/servico/5
+      - url: http://localhost:3000/servico/4
         name: servico-deleta
         meta:
           id: req_d3eeefe81a52495da58fde6a4cc7f6ef
           created: 1772154998986
-          modified: 1772155043523
+          modified: 1772936361786
           isPrivate: false
           description: ""
           sortKey: -1772150067485
@@ -162,7 +161,7 @@ collection:
         meta:
           id: req_2bffa46c576b45daafb26cee2b2f402a
           created: 1771790973112
-          modified: 1772151069864
+          modified: 1772940014980
           isPrivate: false
           description: ""
           sortKey: -1772150117446
@@ -171,11 +170,10 @@ collection:
           mimeType: application/json
           text: |-
             { 
-            "codigo": "6",
-            "nome": "marcela nobrega",
-            "login": "marcelanobrega",
+            "nome": "alisson delaroza",
+            "login": "alissondelaroza",
             "senha": "123",
-            "email": "marcelanobrega@gmail.com",
+            "email": "alisson.delaroza@gmail.com",
             "tipo": "admin"
             }
         headers:
@@ -287,6 +285,83 @@ collection:
         headers:
           - name: User-Agent
             value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Log
+    meta:
+      id: fld_1697ede5c89b443d95c9229a5e704a66
+      created: 1772818534684
+      modified: 1772818534684
+      sortKey: -1772818534684
+      description: ""
+    children:
+      - url: http://localhost:3000/log?id=3
+        name: log-consulta-codigo
+        meta:
+          id: req_7597e9f86e7245cfa5b23e232614b170
+          created: 1772818557271
+          modified: 1772954837309
+          isPrivate: false
+          description: ""
+          sortKey: -1772818622465
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.3.1
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/log?data=2026-03-08
+        name: log-consulta-data
+        meta:
+          id: req_8be28650187a4b5d890ad7379982152e
+          created: 1772944030679
+          modified: 1772955060733
+          isPrivate: false
+          description: ""
+          sortKey: -1772818622365
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.4.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/log?id=5&data=2026-03-07
+        name: log-consulta-codigo&data
+        meta:
+          id: req_bbbf53fe8dce4a148f886c14d1ac49cf
+          created: 1772950291715
+          modified: 1773000255616
+          isPrivate: false
+          description: ""
+          sortKey: -1772818622565
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.4.0
             description: ""
             disabled: false
         settings:
