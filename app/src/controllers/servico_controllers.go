@@ -18,6 +18,14 @@ func Valida_input(Descricao string, Valor float64) (bool, string) {
 	return true, ""
 }
 
+func Valida_id(id string) (bool, string) {
+	if id == "" {
+		return false, "O campo 'id' é obrigatório e deve ser preenchido!"
+	}
+
+	return true, ""
+}
+
 // CRUD - Servico
 func Insere_Servico(c *fiber.Ctx) error {
 	var novo_servico models.Servico_input
@@ -110,11 +118,10 @@ func Atualiza_Servico(c *fiber.Ctx) error {
 	var id string
 	id = c.Params("id")
 	// Valida Dados de Entrada
-	if id == "" {
+	valido, msg_ret := Valida_id(id)
+	if !valido {
 		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{
-			"message": "O campo 'codigo' é obrigatório e deve ser preenchido!",
-		})
+		return c.JSON(fiber.Map{"message": msg_ret})
 	}
 
 	// Verificar se o Servico ja existe no Cadastro
@@ -169,13 +176,11 @@ func Atualiza_Servico(c *fiber.Ctx) error {
 func Deleta_Servico(c *fiber.Ctx) error {
 	var id string
 	id = c.Params("id")
-
 	// Valida Dados de Entrada
-	if id == "" {
+	valido, msg_ret := Valida_id(id)
+	if !valido {
 		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{
-			"message": "O campo 'codigo' é obrigatório e deve ser preenchido!",
-		})
+		return c.JSON(fiber.Map{"message": msg_ret})
 	}
 
 	// Verificar se o Servico ja existe no Cadastro
@@ -242,13 +247,11 @@ func Consulta_Servico(c *fiber.Ctx) error {
 func Consulta_Servico_Codigo(c *fiber.Ctx) error {
 	var id string
 	id = c.Params("id")
-
 	// Valida Dados de Entrada
-	if id == "" {
+	valido, msg_ret := Valida_id(id)
+	if !valido {
 		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{
-			"message": "O campo 'codigo' é obrigatório e deve ser preenchido!",
-		})
+		return c.JSON(fiber.Map{"message": msg_ret})
 	}
 
 	servico, achou, err, msg := database.Servico_Consultar_Codigo(id)
