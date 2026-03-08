@@ -7,9 +7,41 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+func Valida_usuario_input(usuario models.Usuario_input) (bool, string) {
+	if usuario.Nome == "" {
+		return false, "O campo 'nome' é obrigatório e deve ser preenchido!"
+	}
+
+	if usuario.Login == "" {
+		return false, "O campo 'login' é obrigatório e deve ser preenchido!"
+	}
+
+	if usuario.Senha == "" {
+		return false, "O campo 'senha' é obrigatório e deve ser preenchido!"
+	}
+
+	if usuario.Email == "" {
+		return false, "O campo 'email' é obrigatório e deve ser preenchido!"
+	}
+
+	if usuario.Tipo == "" {
+		return false, "O campo 'tipo' é obrigatório e deve ser preenchido!"
+	}
+
+	return true, ""
+}
+
+func Valida_usuario_id(id string) (bool, string) {
+	if id == "" {
+		return false, "O campo 'id' é obrigatório e deve ser preenchido!"
+	}
+
+	return true, ""
+}
+
 // CRUD - Usuarios
 func Insere_Usuario(c *fiber.Ctx) error {
-	var novo_usuario models.Usuario
+	var novo_usuario models.Usuario_input
 
 	err := c.BodyParser(&novo_usuario)
 	if err != nil {
@@ -20,53 +52,20 @@ func Insere_Usuario(c *fiber.Ctx) error {
 	}
 
 	// Valida Dados de Entrada
-	// if novo_usuario.Codigo == "" {
-	// 	c.Status(fiber.StatusBadRequest)
-	// 	return c.JSON(fiber.Map{
-	// 		"message": "O campo 'codigo' é obrigatório e deve ser preenchido!",
-	// 	})
-	// }
-
-	if novo_usuario.Nome == "" {
+	valido, msg_ret := Valida_usuario_input(novo_usuario)
+	if !valido {
 		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{
-			"message": "O campo 'nome' é obrigatório e deve ser preenchido!",
-		})
-	}
-
-	if novo_usuario.Login == "" {
-		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{
-			"message": "O campo 'login' é obrigatório e deve ser preenchido!",
-		})
-	}
-
-	if novo_usuario.Senha == "" {
-		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{
-			"message": "O campo 'senha' é obrigatório e deve ser preenchido!",
-		})
-	}
-
-	if novo_usuario.Email == "" {
-		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{
-			"message": "O campo 'email' é obrigatório e deve ser preenchido!",
-		})
-	}
-
-	if novo_usuario.Tipo == "" {
-		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{
-			"message": "O campo 'tipo' é obrigatório e deve ser preenchido!",
-		})
+		return c.JSON(fiber.Map{"message": msg_ret})
 	}
 
 	// Verificar se o Usuario ja existe no Cadastro
-	_, achou, err, msg := database.Usuario_Consultar_Codigo(novo_usuario.Codigo)
+	achou, msg_ret, err := database.Usuario_Consultar_Email(novo_usuario.Email)
 	if err != nil {
 		c.Status(fiber.StatusInternalServerError)
-		return c.JSON(fiber.Map{"error": err.Error()})
+		return c.JSON(fiber.Map{
+			"message": msg_ret,
+			"error":   err.Error(),
+		})
 	}
 
 	if !achou {
@@ -77,6 +76,31 @@ func Insere_Usuario(c *fiber.Ctx) error {
 			return c.JSON(fiber.Map{"error": err.Error()})
 		}
 
+		// log -> INSERIR
+		var novo_log models.Log_input
+		// busca ultimo id serviço
+		ok, retorno, err := database.Usuario_ultimo_id()
+		if !ok {
+			c.Status(fiber.StatusNotFound)
+			return c.JSON(fiber.Map{
+				"retorno": retorno,
+				"error":   err.Error(),
+			})
+		}
+		novo_log.Codigo_recurso = retorno
+		novo_log.Criado_por = "1"
+		novo_log.Descricao = "insercao de usuario"
+
+		msg, err = database.Log_Inserir(novo_log)
+		if err != nil {
+			c.Status(fiber.StatusInternalServerError)
+			return c.JSON(fiber.Map{
+				"message": msg,
+				"error":   err.Error(),
+			})
+		}
+		// log -> INSERIR
+
 		c.Status(fiber.StatusCreated)
 		return c.JSON(fiber.Map{
 			"message": msg,
@@ -85,13 +109,13 @@ func Insere_Usuario(c *fiber.Ctx) error {
 		// Usuário existe. Não sera inserido...
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{
-			"message": msg,
+			"message": msg_ret + " - Não será inserido",
 		})
 	}
 }
 
 func Atualiza_Usuario(c *fiber.Ctx) error {
-	var altera_usuario models.Usuario
+	var altera_usuario models.Usuario_input
 
 	err := c.BodyParser(&altera_usuario)
 	if err != nil {
@@ -104,11 +128,10 @@ func Atualiza_Usuario(c *fiber.Ctx) error {
 	var id string
 	id = c.Params("id")
 	// Valida Dados de Entrada
-	if id == "" {
+	valido, msg_ret := Valida_usuario_id(id)
+	if !valido {
 		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{
-			"message": "O campo 'codigo' é obrigatório e deve ser preenchido!",
-		})
+		return c.JSON(fiber.Map{"message": msg_ret})
 	}
 
 	// Verificar se o Usuario ja existe no Cadastro
@@ -128,12 +151,27 @@ func Atualiza_Usuario(c *fiber.Ctx) error {
 
 	} else {
 		// Usuário existe. Seguindo para alteração...
-		altera_usuario.Codigo = id
-		msg, err := database.Usuario_Atualizar(altera_usuario)
+		msg, err := database.Usuario_Atualizar(id, altera_usuario)
 		if err != nil {
 			c.Status(fiber.StatusInternalServerError)
 			return c.JSON(fiber.Map{"error": err.Error()})
 		}
+
+		// log -> INSERIR
+		var novo_log models.Log_input
+		novo_log.Codigo_recurso = id
+		novo_log.Criado_por = "1"
+		novo_log.Descricao = "alteracao de usuario"
+
+		msg, err = database.Log_Inserir(novo_log)
+		if err != nil {
+			c.Status(fiber.StatusInternalServerError)
+			return c.JSON(fiber.Map{
+				"message": msg,
+				"error":   err.Error(),
+			})
+		}
+		// log -> INSERIR
 
 		c.Status(fiber.StatusOK)
 		return c.JSON(fiber.Map{
@@ -148,11 +186,10 @@ func Deleta_Usuario(c *fiber.Ctx) error {
 	id = c.Params("id")
 
 	// Valida Dados de Entrada
-	if id == "" {
+	valido, msg_ret := Valida_usuario_id(id)
+	if !valido {
 		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{
-			"message": "O campo 'codigo' é obrigatório e deve ser preenchido!",
-		})
+		return c.JSON(fiber.Map{"message": msg_ret})
 	}
 
 	// Verificar se o Usuario ja existe no Cadastro
@@ -176,6 +213,22 @@ func Deleta_Usuario(c *fiber.Ctx) error {
 			c.Status(fiber.StatusInternalServerError)
 			return c.JSON(fiber.Map{"error": err.Error()})
 		}
+
+		// log -> INSERIR
+		var novo_log models.Log_input
+		novo_log.Codigo_recurso = id
+		novo_log.Criado_por = "1"
+		novo_log.Descricao = "delecao de usuario"
+
+		msg, err = database.Log_Inserir(novo_log)
+		if err != nil {
+			c.Status(fiber.StatusInternalServerError)
+			return c.JSON(fiber.Map{
+				"message": msg,
+				"error":   err.Error(),
+			})
+		}
+		// log -> INSERIR
 
 		c.Status(fiber.StatusOK)
 		return c.JSON(fiber.Map{
@@ -205,11 +258,10 @@ func Consulta_Usuario_Codigo(c *fiber.Ctx) error {
 	id = c.Params("id")
 
 	// Valida Dados de Entrada
-	if id == "" {
+	valido, msg_ret := Valida_usuario_id(id)
+	if !valido {
 		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{
-			"message": "O campo 'codigo' é obrigatório e deve ser preenchido!",
-		})
+		return c.JSON(fiber.Map{"message": msg_ret})
 	}
 
 	usuario, achou, err, msg := database.Usuario_Consultar_Codigo(id)

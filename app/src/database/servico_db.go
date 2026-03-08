@@ -34,9 +34,6 @@ func Servico_Inserir(novo_servico models.Servico_input) (string, error) {
 		return msg, err
 	}
 
-	id, err := res.LastInsertId()
-	fmt.Println(id)
-
 	linhas, err := res.RowsAffected()
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao validar linhas afetadas: %s", err.Error())

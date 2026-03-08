@@ -7,7 +7,7 @@ import (
 )
 
 // Usuarios
-func Usuario_Inserir(novo_usuario models.Usuario) (string, error) {
+func Usuario_Inserir(novo_usuario models.Usuario_input) (string, error) {
 	var msg string
 
 	db, err := Conectar()
@@ -37,8 +37,8 @@ func Usuario_Inserir(novo_usuario models.Usuario) (string, error) {
 		return msg, err
 	}
 
-	id, err := res.LastInsertId()
-	fmt.Println(id)
+	//id, err := res.LastInsertId()
+	//fmt.Println(id)
 
 	linhas, err := res.RowsAffected()
 	if err != nil {
@@ -51,7 +51,7 @@ func Usuario_Inserir(novo_usuario models.Usuario) (string, error) {
 	return msg, nil
 }
 
-func Usuario_Atualizar(altera_usuario models.Usuario) (string, error) {
+func Usuario_Atualizar(codigo string, altera_usuario models.Usuario_input) (string, error) {
 	var msg string
 
 	db, err := Conectar()
@@ -71,7 +71,7 @@ func Usuario_Atualizar(altera_usuario models.Usuario) (string, error) {
 
 	stmt, _ := db.Prepare(query)
 
-	res, err := stmt.Exec(altera_usuario.Nome, altera_usuario.Login, altera_usuario.Senha, altera_usuario.Email, altera_usuario.Tipo, altera_usuario.Codigo)
+	res, err := stmt.Exec(altera_usuario.Nome, altera_usuario.Login, altera_usuario.Senha, altera_usuario.Email, altera_usuario.Tipo, codigo)
 
 	id, _ := res.LastInsertId()
 	fmt.Println(id)
@@ -109,7 +109,7 @@ func Usuario_Deletar(codigo_usuario string) (string, error) {
 	return msg, nil
 }
 
-func Usuario_Consultar() ([]models.Usuario, error, string) {
+func Usuario_Consultar() ([]models.Usuario_output, error, string) {
 	var msg string
 
 	db, err := Conectar()
@@ -119,7 +119,7 @@ func Usuario_Consultar() ([]models.Usuario, error, string) {
 	}
 	defer db.Close()
 
-	var usuarios []models.Usuario
+	var usuarios []models.Usuario_output
 	query := `SELECT codigo, nome, login, senha, email, tipo, data_criacao_atu FROM usuarios`
 
 	rows, err := db.Query(query)
@@ -129,7 +129,7 @@ func Usuario_Consultar() ([]models.Usuario, error, string) {
 	defer rows.Close()
 
 	for rows.Next() {
-		var u models.Usuario
+		var u models.Usuario_output
 		err := rows.Scan(&u.Codigo, &u.Nome, &u.Login, &u.Senha, &u.Email, &u.Tipo, &u.Data_criacao_atu)
 		if err != nil {
 			return nil, err, err.Error()
@@ -145,9 +145,9 @@ func Usuario_Consultar() ([]models.Usuario, error, string) {
 	return usuarios, nil, msg
 }
 
-func Usuario_Consultar_Codigo(codigo_usuario string) (models.Usuario, bool, error, string) {
+func Usuario_Consultar_Codigo(codigo_usuario string) (models.Usuario_output, bool, error, string) {
 	var msg string
-	var usuario models.Usuario
+	var usuario models.Usuario_output
 
 	db, err := Conectar()
 	if err != nil {
@@ -178,4 +178,70 @@ func Usuario_Consultar_Codigo(codigo_usuario string) (models.Usuario, bool, erro
 	// Sucesso - Encontrou
 	msg = fmt.Sprintf("Sucesso - Usuario %s encontrado com sucesso", usuario.Codigo)
 	return usuario, true, nil, msg
+}
+
+func Usuario_Consultar_Email(email_usuario string) (bool, string, error) {
+	var msg string
+
+	db, err := Conectar()
+	if err != nil {
+		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
+		return false, msg, err
+	}
+	defer db.Close()
+
+	query := "SELECT * FROM usuarios WHERE email = ?"
+
+	rows, err := db.Query(query, email_usuario)
+	if err != nil {
+		return false, err.Error(), err
+	}
+	defer rows.Close()
+
+	if !rows.Next() {
+		msg = fmt.Sprintf("Nenhum registro encontrado para o email: %s ", email_usuario)
+		return false, msg, nil
+	}
+
+	// err = rows.Scan(&codigo)
+	// if err != nil {
+	// 	return false, err.Error(), err // Erro real
+	// }
+
+	// Sucesso - Encontrou
+	msg = fmt.Sprintf("Email: %s cadastrado", email_usuario)
+	return true, msg, nil
+}
+
+func Usuario_ultimo_id() (bool, string, error) {
+	var ultimoID, msg string
+
+	db, err := Conectar()
+	if err != nil {
+		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
+		return false, msg, err
+	}
+	defer db.Close()
+
+	// Busca o maior ID atual
+	query := "SELECT COALESCE(MAX(codigo), 0) FROM usuarios"
+
+	rows, err := db.Query(query)
+	if err != nil {
+		msg = fmt.Sprintf("Erro buscar o ultimo id: %s", err.Error())
+		return false, msg, err
+	}
+	defer rows.Close()
+
+	if !rows.Next() {
+		msg = fmt.Sprintf("Nenhum registro encontrado para o usuario: %s ", ultimoID)
+		return false, msg, nil
+	}
+
+	err = rows.Scan(&ultimoID)
+	if err != nil {
+		return false, err.Error(), err // Erro real
+	}
+
+	return true, ultimoID, nil
 }

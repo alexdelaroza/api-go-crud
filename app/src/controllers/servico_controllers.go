@@ -7,18 +7,18 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func Valida_input(Descricao string, Valor float64) (bool, string) {
-	if Descricao == "" {
+func Valida_servico_input(servico models.Servico_input) (bool, string) {
+	if servico.Descricao == "" {
 		return false, "O campo 'descricao' é obrigatório e deve ser preenchido!"
 	}
 
-	if Valor == 0 {
+	if servico.Valor == 0 {
 		return false, "O campo 'valor' é obrigatório e deve ser preenchido!"
 	}
 	return true, ""
 }
 
-func Valida_id(id string) (bool, string) {
+func Valida_servico_id(id string) (bool, string) {
 	if id == "" {
 		return false, "O campo 'id' é obrigatório e deve ser preenchido!"
 	}
@@ -39,7 +39,7 @@ func Insere_Servico(c *fiber.Ctx) error {
 	}
 
 	// Valida Dados de Entrada
-	valido, msg_ret := Valida_input(novo_servico.Descricao, novo_servico.Valor)
+	valido, msg_ret := Valida_servico_input(novo_servico)
 	if !valido {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{"message": msg_ret})
@@ -118,7 +118,7 @@ func Atualiza_Servico(c *fiber.Ctx) error {
 	var id string
 	id = c.Params("id")
 	// Valida Dados de Entrada
-	valido, msg_ret := Valida_id(id)
+	valido, msg_ret := Valida_servico_id(id)
 	if !valido {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{"message": msg_ret})
@@ -177,7 +177,7 @@ func Deleta_Servico(c *fiber.Ctx) error {
 	var id string
 	id = c.Params("id")
 	// Valida Dados de Entrada
-	valido, msg_ret := Valida_id(id)
+	valido, msg_ret := Valida_servico_id(id)
 	if !valido {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{"message": msg_ret})
@@ -248,7 +248,7 @@ func Consulta_Servico_Codigo(c *fiber.Ctx) error {
 	var id string
 	id = c.Params("id")
 	// Valida Dados de Entrada
-	valido, msg_ret := Valida_id(id)
+	valido, msg_ret := Valida_servico_id(id)
 	if !valido {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{"message": msg_ret})
