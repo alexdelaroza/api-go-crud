@@ -11,5 +11,5 @@ type Usuario struct {
 	Senha        string
 	Email        string
 	Tipo         string
-	Data_ult_atu time.Time
+	Data_criacao_atu time.Time
 }

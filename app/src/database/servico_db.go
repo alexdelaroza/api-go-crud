@@ -7,7 +7,7 @@ import (
 )
 
 // Servicos
-func Servico_Inserir(novo_servico models.Servico) (string, error) {
+func Servico_Inserir(novo_servico models.Servico_input) (string, error) {
 	var msg string
 
 	db, err := Conectar()
@@ -18,10 +18,9 @@ func Servico_Inserir(novo_servico models.Servico) (string, error) {
 	defer db.Close()
 
 	query := `INSERT INTO servico (
-                          cod_servico
-                        , descricao_servico
-						, valor_servico
-                 ) VALUES (?, ?, ?)`
+                          descricao
+						, valor
+                 ) VALUES (?, ?)`
 
 	stmt, err := db.Prepare(query)
 	if err != nil {
@@ -29,7 +28,7 @@ func Servico_Inserir(novo_servico models.Servico) (string, error) {
 		return msg, err
 	}
 
-	res, err := stmt.Exec(novo_servico.Codigo, novo_servico.Descricao, novo_servico.Valor)
+	res, err := stmt.Exec(novo_servico.Descricao, novo_servico.Valor)
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao executar a insercao: %s", err.Error())
 		return msg, err
@@ -49,7 +48,7 @@ func Servico_Inserir(novo_servico models.Servico) (string, error) {
 	return msg, nil
 }
 
-func Servico_Atualizar(altera_servico models.Servico) (string, error) {
+func Servico_Atualizar(codigo string, altera_servico models.Servico_input) (string, error) {
 	var msg string
 
 	db, err := Conectar()
@@ -60,13 +59,13 @@ func Servico_Atualizar(altera_servico models.Servico) (string, error) {
 	defer db.Close()
 
 	query := `update  servico 
-	            set   descricao_servico = ? 
-				  ,   valor_servico     = ?
-                where cod_servico       = ?`
+	            set   descricao = ? 
+				  ,   valor     = ?
+                where codigo    = ?`
 
 	stmt, _ := db.Prepare(query)
 
-	res, err := stmt.Exec(altera_servico.Descricao, altera_servico.Valor, altera_servico.Codigo)
+	res, err := stmt.Exec(altera_servico.Descricao, altera_servico.Valor, codigo)
 
 	id, _ := res.LastInsertId()
 	fmt.Println(id)
@@ -88,7 +87,7 @@ func Servico_Deletar(codigo_servico string) (string, error) {
 	}
 	defer db.Close()
 
-	query := `delete from servico where cod_servico = ?`
+	query := `delete from servico where codigo = ?`
 
 	stmt, _ := db.Prepare(query)
 
@@ -104,7 +103,7 @@ func Servico_Deletar(codigo_servico string) (string, error) {
 	return msg, nil
 }
 
-func Servico_Consultar() ([]models.Servico, error, string) {
+func Servico_Consultar() ([]models.Servico_output, error, string) {
 	var msg string
 
 	db, err := Conectar()
@@ -114,7 +113,7 @@ func Servico_Consultar() ([]models.Servico, error, string) {
 	}
 	defer db.Close()
 
-	query := `SELECT cod_servico, descricao_servico, valor_servico, data_ult_atu_servico FROM servico`
+	query := `SELECT codigo, descricao, valor, data_criacao_atu FROM servico`
 
 	rows, err := db.Query(query)
 	if err != nil {
@@ -122,11 +121,11 @@ func Servico_Consultar() ([]models.Servico, error, string) {
 	}
 	defer rows.Close()
 
-	var servicos []models.Servico
+	var servicos []models.Servico_output
 
 	for rows.Next() {
-		var s models.Servico
-		err := rows.Scan(&s.Codigo, &s.Descricao, &s.Valor, &s.Data_ult_atu)
+		var s models.Servico_output
+		err := rows.Scan(&s.Codigo, &s.Descricao, &s.Valor, &s.Data_criacao_atu)
 		if err != nil {
 			return nil, err, err.Error()
 		}
@@ -141,10 +140,10 @@ func Servico_Consultar() ([]models.Servico, error, string) {
 	return servicos, nil, msg
 }
 
-func Servico_Consultar_Codigo(codigo_servico string) (models.Servico, bool, error, string) {
+func Servico_Consultar_Codigo(codigo_servico string) (models.Servico_output, bool, error, string) {
 	var msg string
 
-	var servico models.Servico
+	var servico models.Servico_output
 	db, err := Conectar()
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
@@ -152,7 +151,7 @@ func Servico_Consultar_Codigo(codigo_servico string) (models.Servico, bool, erro
 	}
 	defer db.Close()
 
-	query := "SELECT cod_servico, descricao_servico, valor_servico, data_ult_atu_servico FROM servico WHERE cod_servico = ?"
+	query := "SELECT codigo, descricao, valor, data_criacao_atu FROM servico WHERE codigo = ?"
 
 	rows, err := db.Query(query, codigo_servico)
 	if err != nil {
@@ -165,13 +164,79 @@ func Servico_Consultar_Codigo(codigo_servico string) (models.Servico, bool, erro
 		return servico, false, nil, msg
 	}
 
-	err = rows.Scan(&servico.Codigo, &servico.Descricao, &servico.Valor, &servico.Data_ult_atu)
+	err = rows.Scan(&servico.Codigo, &servico.Descricao, &servico.Valor, &servico.Data_criacao_atu)
 
 	if err != nil {
 		return servico, false, err, err.Error() // Erro real
 	}
 
 	// Sucesso - Encontrou
-	msg = fmt.Sprintf("Sucesso - Servico %s encontrado com sucesso", servico.Codigo)
+	msg = fmt.Sprintf("Sucesso - Servico %s encontrado", servico.Codigo)
 	return servico, true, nil, msg
+}
+
+func Servico_Consultar_Descricao(descricao_servico string) (bool, string, error) {
+	var msg, codigo string
+
+	db, err := Conectar()
+	if err != nil {
+		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
+		return false, msg, err
+	}
+	defer db.Close()
+
+	query := "SELECT codigo FROM servico WHERE descricao = ?"
+
+	rows, err := db.Query(query, descricao_servico)
+	if err != nil {
+		return false, err.Error(), err
+	}
+	defer rows.Close()
+
+	if !rows.Next() {
+		msg = fmt.Sprintf("Nenhum registro encontrado para o servico: %s ", descricao_servico)
+		return false, msg, nil
+	}
+
+	err = rows.Scan(&codigo)
+	if err != nil {
+		return false, err.Error(), err // Erro real
+	}
+
+	// Sucesso - Encontrou
+	msg = fmt.Sprintf("Servico %s encontrado", codigo)
+	return true, msg, nil
+}
+
+func Servico_ultimo_id() (bool, string, error) {
+	var ultimoID, msg string
+
+	db, err := Conectar()
+	if err != nil {
+		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
+		return false, msg, err
+	}
+	defer db.Close()
+
+	// Busca o maior ID atual
+	query := "SELECT COALESCE(MAX(codigo), 0) FROM servico"
+
+	rows, err := db.Query(query)
+	if err != nil {
+		msg = fmt.Sprintf("Erro buscar o ultimo id: %s", err.Error())
+		return false, msg, err
+	}
+	defer rows.Close()
+
+	if !rows.Next() {
+		msg = fmt.Sprintf("Nenhum registro encontrado para o servico: %s ", ultimoID)
+		return false, msg, nil
+	}
+
+	err = rows.Scan(&ultimoID)
+	if err != nil {
+		return false, err.Error(), err // Erro real
+	}
+
+	return true, ultimoID, nil
 }

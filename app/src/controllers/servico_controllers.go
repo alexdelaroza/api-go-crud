@@ -7,9 +7,20 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+func Valida_input(Descricao string, Valor float64) (bool, string) {
+	if Descricao == "" {
+		return false, "O campo 'descricao' é obrigatório e deve ser preenchido!"
+	}
+
+	if Valor == 0 {
+		return false, "O campo 'valor' é obrigatório e deve ser preenchido!"
+	}
+	return true, ""
+}
+
 // CRUD - Servico
 func Insere_Servico(c *fiber.Ctx) error {
-	var novo_servico models.Servico
+	var novo_servico models.Servico_input
 
 	err := c.BodyParser(&novo_servico)
 	if err != nil {
@@ -20,32 +31,20 @@ func Insere_Servico(c *fiber.Ctx) error {
 	}
 
 	// Valida Dados de Entrada
-	if novo_servico.Codigo == "" {
+	valido, msg_ret := Valida_input(novo_servico.Descricao, novo_servico.Valor)
+	if !valido {
 		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{
-			"message": "O campo 'codigo' é obrigatório e deve ser preenchido!",
-		})
-	}
-
-	if novo_servico.Descricao == "" {
-		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{
-			"message": "O campo 'descricao' é obrigatório e deve ser preenchido!",
-		})
-	}
-
-	if novo_servico.Valor == 0 {
-		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{
-			"message": "O campo 'valor' é obrigatório e deve ser preenchido!",
-		})
+		return c.JSON(fiber.Map{"message": msg_ret})
 	}
 
 	// Verificar se o Servico ja existe no Cadastro
-	_, achou, err, msg := database.Servico_Consultar_Codigo(novo_servico.Codigo)
+	achou, msg_ret, err := database.Servico_Consultar_Descricao(novo_servico.Descricao)
 	if err != nil {
 		c.Status(fiber.StatusInternalServerError)
-		return c.JSON(fiber.Map{"error": err.Error()})
+		return c.JSON(fiber.Map{
+			"message": msg_ret,
+			"error":   err.Error(),
+		})
 	}
 
 	if !achou {
@@ -53,14 +52,26 @@ func Insere_Servico(c *fiber.Ctx) error {
 		msg, err := database.Servico_Inserir(novo_servico)
 		if err != nil {
 			c.Status(fiber.StatusInternalServerError)
-			return c.JSON(fiber.Map{"error": err.Error()})
+			return c.JSON(fiber.Map{
+				"msg":   msg,
+				"error": err.Error(),
+			})
 		}
 
 		// log -> INSERIR
 		var novo_log models.Log_input
-		novo_log.Codigo_recurso = "1"
+		// busca ultimo id serviço
+		ok, retorno, err := database.Servico_ultimo_id()
+		if !ok {
+			c.Status(fiber.StatusNotFound)
+			return c.JSON(fiber.Map{
+				"retorno": retorno,
+				"error":   err.Error(),
+			})
+		}
+		novo_log.Codigo_recurso = retorno
 		novo_log.Criado_por = "1"
-		novo_log.Descricao = "inserção de novo serviço"
+		novo_log.Descricao = "insercao de servico"
 
 		msg, err = database.Log_Inserir(novo_log)
 		if err != nil {
@@ -80,13 +91,13 @@ func Insere_Servico(c *fiber.Ctx) error {
 		// Servico existe. Não sera inserido...
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{
-			"message": msg,
+			"message": msg_ret + " - Não será inserido",
 		})
 	}
 }
 
 func Atualiza_Servico(c *fiber.Ctx) error {
-	var altera_servico models.Servico
+	var altera_servico models.Servico_input
 
 	err := c.BodyParser(&altera_servico)
 	if err != nil {
@@ -122,12 +133,30 @@ func Atualiza_Servico(c *fiber.Ctx) error {
 		})
 	} else {
 		// Servico existe. Seguindo para alteração...
-		altera_servico.Codigo = id
-		msg, err := database.Servico_Atualizar(altera_servico)
+		msg, err := database.Servico_Atualizar(id, altera_servico)
 		if err != nil {
 			c.Status(fiber.StatusInternalServerError)
-			return c.JSON(fiber.Map{"error": err.Error()})
+			return c.JSON(fiber.Map{
+				"message": msg,
+				"error":   err.Error(),
+			})
 		}
+
+		// log -> INSERIR
+		var novo_log models.Log_input
+		novo_log.Codigo_recurso = id
+		novo_log.Criado_por = "1"
+		novo_log.Descricao = "alteracao de servico"
+
+		msg, err = database.Log_Inserir(novo_log)
+		if err != nil {
+			c.Status(fiber.StatusInternalServerError)
+			return c.JSON(fiber.Map{
+				"message": msg,
+				"error":   err.Error(),
+			})
+		}
+		// log -> INSERIR
 
 		c.Status(fiber.StatusOK)
 		return c.JSON(fiber.Map{
@@ -171,6 +200,22 @@ func Deleta_Servico(c *fiber.Ctx) error {
 			return c.JSON(fiber.Map{"error": err.Error()})
 		}
 
+		// log -> INSERIR
+		var novo_log models.Log_input
+		novo_log.Codigo_recurso = id
+		novo_log.Criado_por = "1"
+		novo_log.Descricao = "delecao de servico"
+
+		msg, err = database.Log_Inserir(novo_log)
+		if err != nil {
+			c.Status(fiber.StatusInternalServerError)
+			return c.JSON(fiber.Map{
+				"message": msg,
+				"error":   err.Error(),
+			})
+		}
+		// log -> INSERIR
+
 		c.Status(fiber.StatusOK)
 		return c.JSON(fiber.Map{
 			"message": msg,
@@ -189,8 +234,8 @@ func Consulta_Servico(c *fiber.Ctx) error {
 	// Retorna a lista completa de serviços Cadastrados como um array JSON
 	c.Status(fiber.StatusOK)
 	return c.JSON(fiber.Map{
-		"message": msg,
-		"user":    lista,
+		"message":  msg,
+		"services": lista,
 	})
 }
 
@@ -223,7 +268,7 @@ func Consulta_Servico_Codigo(c *fiber.Ctx) error {
 		c.Status(fiber.StatusOK)
 		return c.JSON(fiber.Map{
 			"message": msg,
-			"user":    servico, // Adiciona o objeto inteiro aqui
+			"service": servico, // Adiciona o objeto inteiro aqui
 		})
 	}
 }

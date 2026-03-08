@@ -2,7 +2,6 @@ package database
 
 import (
 	"fmt"
-	"strconv"
 
 	"api-go-crud/src/models"
 )
@@ -18,26 +17,10 @@ func Log_Inserir(input_log models.Log_input) (string, error) {
 	}
 	defer db.Close()
 
-	// Busca o maior ID atual
-	var ultimoID int
-	rows, err := db.Query("SELECT COALESCE(MAX(cod_log), 0) FROM log")
-	if err != nil {
-		msg = fmt.Sprintf("Erro buscar o ultimo id: %s", err.Error())
-		return msg, err
-	}
-	defer rows.Close()
-
-	rows.Scan(&ultimoID)
-
-	var Codigo string
-	Codigo = strconv.Itoa(ultimoID + 1)
-	fmt.Println(Codigo)
-
 	query := `INSERT INTO log (
-                          cod_log
-                        , descricao_log
+                          descricao
 						, cod_recurso
-						, criado_por_log
+						, criado_por
                  ) VALUES (?, ?, ?)`
 
 	stmt, err := db.Prepare(query)
@@ -46,7 +29,7 @@ func Log_Inserir(input_log models.Log_input) (string, error) {
 		return msg, err
 	}
 
-	res, err := stmt.Exec(Codigo, input_log.Descricao, input_log.Codigo_recurso, input_log.Criado_por)
+	res, err := stmt.Exec(input_log.Descricao, input_log.Codigo_recurso, input_log.Criado_por)
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao executar a insercao: %s", err.Error())
 		return msg, err
@@ -78,7 +61,7 @@ func Log_Consultar_Codigo(codigo_recurso string) (models.Log_output, bool, error
 	defer db.Close()
 
 	log.Codigo_recurso = codigo_recurso
-	query := "SELECT cod_log, descricao_log, criado_por_log, data_ult_atu_log FROM log WHERE cod_recurso = ?"
+	query := "SELECT codigo, descricao, criado_por, data_criacao_atu FROM log WHERE cod_recurso = ?"
 
 	rows, err := db.Query(query, codigo_recurso)
 	if err != nil {
@@ -91,7 +74,7 @@ func Log_Consultar_Codigo(codigo_recurso string) (models.Log_output, bool, error
 		return log, false, nil, msg
 	}
 
-	err = rows.Scan(&log.Codigo, &log.Descricao, &log.Criado_por, &log.Data_ult_atu, &log.Codigo_recurso)
+	err = rows.Scan(&log.Codigo, &log.Descricao, &log.Criado_por, &log.Data_criacao_atu, &log.Codigo_recurso)
 	if err != nil {
 		return log, false, err, err.Error() // Erro real
 	}

@@ -17,14 +17,13 @@ func Usuario_Inserir(novo_usuario models.Usuario) (string, error) {
 	}
 	defer db.Close()
 
-	query := `INSERT INTO usuarios (
-                          cod_usuario, 
-						  nome_usuario, 
-						  login_usuario,
-						  senha_usuario, 
-						  email_usuario, 
-						  tipo_usuario
-                 ) VALUES (?, ?, ?, ?, ?, ?)`
+	query := `INSERT INTO usuarios ( 
+						  nome, 
+						  login,
+						  senha, 
+						  email, 
+						  tipo
+                 ) VALUES (?, ?, ?, ?, ?)`
 
 	stmt, err := db.Prepare(query)
 	if err != nil {
@@ -32,7 +31,7 @@ func Usuario_Inserir(novo_usuario models.Usuario) (string, error) {
 		return msg, err
 	}
 
-	res, err := stmt.Exec(novo_usuario.Codigo, novo_usuario.Nome, novo_usuario.Login, novo_usuario.Senha, novo_usuario.Email, novo_usuario.Tipo)
+	res, err := stmt.Exec(novo_usuario.Nome, novo_usuario.Login, novo_usuario.Senha, novo_usuario.Email, novo_usuario.Tipo)
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao executar a insercao: %s", err.Error())
 		return msg, err
@@ -63,12 +62,12 @@ func Usuario_Atualizar(altera_usuario models.Usuario) (string, error) {
 	defer db.Close()
 
 	query := `update usuarios 
-	            set   nome_usuario  = ? 
-				  ,   login_usuario = ?
-				  ,   senha_usuario = ? 
-				  ,   email_usuario = ? 
-				  ,   tipo_usuario  = ?
-                where cod_usuario   = ?`
+	            set   nome   = ? 
+				  ,   login  = ?
+				  ,   senha  = ? 
+				  ,   email  = ? 
+				  ,   tipo   = ?
+                where codigo = ?`
 
 	stmt, _ := db.Prepare(query)
 
@@ -94,7 +93,7 @@ func Usuario_Deletar(codigo_usuario string) (string, error) {
 	}
 	defer db.Close()
 
-	query := `delete from usuarios where cod_usuario = ?`
+	query := `delete from usuarios where codigo = ?`
 
 	stmt, _ := db.Prepare(query)
 
@@ -121,7 +120,7 @@ func Usuario_Consultar() ([]models.Usuario, error, string) {
 	defer db.Close()
 
 	var usuarios []models.Usuario
-	query := `SELECT cod_usuario, nome_usuario, login_usuario, senha_usuario, email_usuario, tipo_usuario, data_ult_atu_usuario FROM usuarios`
+	query := `SELECT codigo, nome, login, senha, email, tipo, data_criacao_atu FROM usuarios`
 
 	rows, err := db.Query(query)
 	if err != nil {
@@ -131,7 +130,7 @@ func Usuario_Consultar() ([]models.Usuario, error, string) {
 
 	for rows.Next() {
 		var u models.Usuario
-		err := rows.Scan(&u.Codigo, &u.Nome, &u.Login, &u.Senha, &u.Email, &u.Tipo, &u.Data_ult_atu)
+		err := rows.Scan(&u.Codigo, &u.Nome, &u.Login, &u.Senha, &u.Email, &u.Tipo, &u.Data_criacao_atu)
 		if err != nil {
 			return nil, err, err.Error()
 		}
@@ -157,7 +156,7 @@ func Usuario_Consultar_Codigo(codigo_usuario string) (models.Usuario, bool, erro
 	}
 	defer db.Close()
 
-	query := "select cod_usuario, nome_usuario, login_usuario, senha_usuario, email_usuario, tipo_usuario, data_ult_atu_usuario from usuarios where cod_usuario = ?"
+	query := "select codigo, nome, login, senha, email, tipo, data_criacao_atu from usuarios where codigo = ?"
 
 	rows, err := db.Query(query, codigo_usuario)
 	if err != nil {
@@ -170,7 +169,7 @@ func Usuario_Consultar_Codigo(codigo_usuario string) (models.Usuario, bool, erro
 		return usuario, false, nil, msg
 	}
 
-	err = rows.Scan(&usuario.Codigo, &usuario.Nome, &usuario.Login, &usuario.Senha, &usuario.Email, &usuario.Tipo, &usuario.Data_ult_atu)
+	err = rows.Scan(&usuario.Codigo, &usuario.Nome, &usuario.Login, &usuario.Senha, &usuario.Email, &usuario.Tipo, &usuario.Data_criacao_atu)
 	if err != nil {
 		// Erro real
 		return usuario, false, err, err.Error()

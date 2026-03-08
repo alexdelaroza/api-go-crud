@@ -20,12 +20,12 @@ func Insere_Usuario(c *fiber.Ctx) error {
 	}
 
 	// Valida Dados de Entrada
-	if novo_usuario.Codigo == "" {
-		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{
-			"message": "O campo 'codigo' é obrigatório e deve ser preenchido!",
-		})
-	}
+	// if novo_usuario.Codigo == "" {
+	// 	c.Status(fiber.StatusBadRequest)
+	// 	return c.JSON(fiber.Map{
+	// 		"message": "O campo 'codigo' é obrigatório e deve ser preenchido!",
+	// 	})
+	// }
 
 	if novo_usuario.Nome == "" {
 		c.Status(fiber.StatusBadRequest)

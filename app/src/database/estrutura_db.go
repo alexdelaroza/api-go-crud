@@ -20,39 +20,44 @@ func Create_table() {
 	}
 	defer db.Close()
 
-	exec(db, "create database if not exists cursogo")
-	exec(db, "use cursogo")
+	//exec(db, "create database if not exists cursogo")
+	//exec(db, "use cursogo")
 
-	exec(db, "drop table if exists usuarios")
-	exec(db, `create table usuarios (
-             cod_usuario VARCHAR(36),
-             nome_usuario VARCHAR(250) NOT NULL,
-             login_usuario VARCHAR(250) NOT NULL,
-             senha_usuario VARCHAR(250) NOT NULL,
-             email_usuario VARCHAR(250) NOT NULL UNIQUE,
-             tipo_usuario VARCHAR(250) NOT NULL,
-             data_ult_atu_usuario TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-             PRIMARY KEY (cod_usuario)
-        )`)
-
-	exec(db, "drop table if exists servico")
-	exec(db, `create table servico (
-             cod_servico VARCHAR(36),
-             descricao_servico VARCHAR(250) NOT NULL,
-             valor_servico DECIMAL(10, 2) NOT NULL,
-             data_ult_atu_servico TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-             CONSTRAINT chk_valor_positivo CHECK (valor_servico > 0),
-             PRIMARY KEY (cod_servico)
-        )`)
+	exec(db, "create database if not exists crud_db")
+	exec(db, "use crud_db")
 
 	exec(db, "drop table if exists log")
+	exec(db, "drop table if exists servico")
+	exec(db, "drop table if exists usuarios")
+
+	exec(db, `create table usuarios (
+             codigo INT NOT NULL AUTO_INCREMENT,
+             nome VARCHAR(250) NOT NULL,
+             login VARCHAR(250) NOT NULL,
+             senha VARCHAR(250) NOT NULL,
+             email VARCHAR(250) NOT NULL UNIQUE,
+             tipo VARCHAR(250) NOT NULL,
+             data_criacao_atu TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+             PRIMARY KEY (codigo)
+        )`)
+
+	exec(db, `create table servico (
+             codigo INT NOT NULL AUTO_INCREMENT,
+             descricao VARCHAR(250) NOT NULL,
+             valor DECIMAL(10, 2) NOT NULL,
+             data_criacao_atu TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+             CONSTRAINT chk_valor_positivo CHECK (valor > 0),
+             PRIMARY KEY (codigo)
+        )`)
+
 	exec(db, `create table log (
-             cod_log VARCHAR(36),
-             descricao_log TEXT NOT NULL,
+             codigo INT NOT NULL AUTO_INCREMENT,
+             descricao TEXT NOT NULL,
              cod_recurso VARCHAR(36) NOT NULL,
-             criado_por_log VARCHAR(250) NOT NULL,
-             data_ult_atu_log TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-             PRIMARY KEY (cod_log)
+             criado_por INT NOT NULL,
+             data_criacao_atu TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+             PRIMARY KEY (codigo),
+             foreign key(criado_por) references usuarios(codigo)
         )`)
 
 }
