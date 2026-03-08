@@ -1,4 +1,5 @@
-[ ] verifica o email se ja existe cadastrado quando for inserir ou atualizar
-[ ] atualizar os status com o fiber - c.Status(fiber.StatusOK)
-[ ]
+[x] verifica o email se ja existe cadastrado quando for inserir ou atualizar
+[x] atualizar os status com o fiber - c.Status(fiber.StatusOK)
+[ ]verificar login para ser unico
+[ ] delecao fisica e virtual (campo status = ativo/inativo)
 [ ] 
