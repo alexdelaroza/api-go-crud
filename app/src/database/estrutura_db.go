@@ -55,7 +55,7 @@ func Create_table() {
              descricao TEXT NOT NULL,
              cod_recurso VARCHAR(36) NOT NULL,
              criado_por INT NOT NULL,
-             data_criacao_atu DATE DEFAULT CURRENT_DATE,
+             data_criacao_atu TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
              PRIMARY KEY (codigo),
              foreign key(criado_por) references usuarios(codigo)
         )`)

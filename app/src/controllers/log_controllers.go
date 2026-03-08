@@ -11,6 +11,30 @@ func Consulta_Log(c *fiber.Ctx) error {
 	data := c.Query("data") // ex: ?data=2026-03-08
 
 	//busca log por ID
+	if id != "" && data != "" {
+		lista, achou, err, msg := database.Log_Consultar_Codigo_Data(id, data)
+		if err != nil {
+			c.Status(fiber.StatusInternalServerError)
+			return c.JSON(fiber.Map{"error": err.Error()})
+		}
+
+		if !achou {
+			// Log não existe...
+			c.Status(fiber.StatusNotFound)
+			return c.JSON(fiber.Map{
+				"message": msg,
+			})
+		} else {
+			// Log existe...
+			c.Status(fiber.StatusOK)
+			return c.JSON(fiber.Map{
+				"message": msg,
+				"log":     lista,
+			})
+		}
+	}
+
+	//busca log por ID
 	if id != "" {
 		lista, achou, err, msg := database.Log_Consultar_Codigo(id)
 		if err != nil {

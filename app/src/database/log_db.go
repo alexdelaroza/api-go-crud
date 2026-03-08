@@ -129,3 +129,45 @@ func Log_Consultar_Data(data_log string) ([]models.Log_output, bool, error, stri
 	msg = "Sucesso - Consulta efetuada"
 	return logs, true, nil, msg
 }
+
+func Log_Consultar_Codigo_Data(codigo_recurso, data_log string) ([]models.Log_output, bool, error, string) {
+	var msg string
+
+	db, err := Conectar()
+	if err != nil {
+		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
+		return nil, false, err, msg
+	}
+	defer db.Close()
+
+	query := "SELECT codigo, descricao, cod_recurso, criado_por, data_criacao_atu FROM log WHERE cod_recurso = ? and DATE(data_criacao_atu) = ?"
+
+	rows, err := db.Query(query, codigo_recurso, data_log)
+	if err != nil {
+		return nil, false, err, err.Error()
+	}
+	defer rows.Close()
+
+	var logs []models.Log_output
+	for rows.Next() {
+		var l models.Log_output
+		err := rows.Scan(&l.Codigo, &l.Descricao, &l.Codigo_recurso, &l.Criado_por, &l.Data_criacao_atu)
+		if err != nil {
+			return nil, false, err, err.Error()
+		}
+		logs = append(logs, l)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, false, err, err.Error()
+	}
+
+	// Se a lista for 0, não achou registros
+	if len(logs) == 0 {
+		msg := fmt.Sprintf("Nenhum registro encontrado para a data: %s ", data_log)
+		return logs, false, nil, msg
+	}
+
+	msg = "Sucesso - Consulta efetuada"
+	return logs, true, nil, msg
+}
