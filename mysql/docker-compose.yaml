@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   db:
     image: mysql:8.0 # You can specify a version, e.g., mysql:latest or mysql:8.0
@@ -6,6 +8,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root # (Change this to a secure password)
       MYSQL_DATABASE: mysql_db
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
     ports:
       - "3306:3306" # Maps port 3306 on your host to port 3306 in the container
     volumes:
