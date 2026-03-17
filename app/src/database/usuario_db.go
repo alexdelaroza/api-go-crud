@@ -17,13 +17,15 @@ func Usuario_Inserir(novo_usuario models.Usuario_input) (int, string, error) {
 	}
 	defer db.Close()
 
-	query := `INSERT INTO usuarios ( 
-						  nome, 
-						  login,
-						  senha, 
-						  email, 
-						  tipo
-                 ) VALUES (?, ?, ?, ?, ?)`
+	query := `
+		INSERT INTO usuarios ( 
+	                nome, 
+					login,
+					senha, 
+					email, 
+					tipo
+           ) VALUES (?, ?, ?, ?, ?)
+	`
 
 	stmt, err := db.Prepare(query)
 	if err != nil {
@@ -95,7 +97,10 @@ func Usuario_Deletar(codigo_usuario string) (string, error) {
 	}
 	defer db.Close()
 
-	query := `delete from usuarios where codigo = ?`
+	query := `
+		delete from usuarios 
+		 where codigo = ?
+	`
 
 	stmt, _ := db.Prepare(query)
 
@@ -122,7 +127,10 @@ func Usuario_Consultar() ([]models.Usuario_output, error, string) {
 	defer db.Close()
 
 	var usuarios []models.Usuario_output
-	query := `SELECT codigo, nome, login, senha, email, tipo, data_criacao_atu FROM usuarios`
+	query := `
+		SELECT codigo, nome, login, senha, email, tipo, data_criacao_atu 
+		FROM usuarios
+	`
 
 	rows, err := db.Query(query)
 	if err != nil {
