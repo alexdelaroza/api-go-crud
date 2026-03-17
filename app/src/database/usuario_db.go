@@ -7,13 +7,13 @@ import (
 )
 
 // Usuarios
-func Usuario_Inserir(novo_usuario models.Usuario_input) (string, error) {
+func Usuario_Inserir(novo_usuario models.Usuario_input) (int, string, error) {
 	var msg string
 
 	db, err := Conectar()
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
-		return msg, err
+		return 0, msg, err
 	}
 	defer db.Close()
 
@@ -28,27 +28,27 @@ func Usuario_Inserir(novo_usuario models.Usuario_input) (string, error) {
 	stmt, err := db.Prepare(query)
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao preparar a query: %s", err.Error())
-		return msg, err
+		return 0, msg, err
 	}
 
 	res, err := stmt.Exec(novo_usuario.Nome, novo_usuario.Login, novo_usuario.Senha, novo_usuario.Email, novo_usuario.Tipo)
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao executar a insercao: %s", err.Error())
-		return msg, err
+		return 0, msg, err
 	}
 
-	//id, err := res.LastInsertId()
+	id, err := res.LastInsertId()
 	//fmt.Println(id)
 
 	linhas, err := res.RowsAffected()
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao validar linhas afetadas: %s", err.Error())
-		return msg, err
+		return 0, msg, err
 	}
 
 	// fmt.Sprintf cria a string formatada
 	msg = fmt.Sprintf("Sucesso! %d linha(s) inserida(s).", linhas)
-	return msg, nil
+	return int(id), msg, err
 }
 
 func Usuario_Atualizar(codigo string, altera_usuario models.Usuario_input) (string, error) {
@@ -61,13 +61,15 @@ func Usuario_Atualizar(codigo string, altera_usuario models.Usuario_input) (stri
 	}
 	defer db.Close()
 
-	query := `update usuarios 
-	            set   nome   = ? 
-				  ,   login  = ?
-				  ,   senha  = ? 
-				  ,   email  = ? 
-				  ,   tipo   = ?
-                where codigo = ?`
+	query := `
+		update usuarios 
+	       set   nome   = ? 
+		     ,   login  = ?
+			 ,   senha  = ? 
+			 ,   email  = ? 
+			 ,   tipo   = ?
+         where   codigo = ?
+	`
 
 	stmt, _ := db.Prepare(query)
 
@@ -182,6 +184,7 @@ func Usuario_Consultar_Codigo(codigo_usuario string) (models.Usuario_output, boo
 
 func Usuario_Consultar_Email(email_usuario string) (bool, string, error) {
 	var msg string
+	var total int
 
 	db, err := Conectar()
 	if err != nil {
@@ -190,7 +193,11 @@ func Usuario_Consultar_Email(email_usuario string) (bool, string, error) {
 	}
 	defer db.Close()
 
-	query := "SELECT * FROM usuarios WHERE email = ?"
+	query := `
+	    SELECT COUNT(*)
+		  FROM usuarios
+		 WHERE email = ? 
+	`
 
 	rows, err := db.Query(query, email_usuario)
 	if err != nil {
@@ -198,15 +205,18 @@ func Usuario_Consultar_Email(email_usuario string) (bool, string, error) {
 	}
 	defer rows.Close()
 
-	if !rows.Next() {
+	rows.Next()
+
+	err = rows.Scan(&total)
+	if err != nil {
+		msg = "Erro ao validar e-mail"
+		return false, msg, err // Erro real
+	}
+
+	if total == 0 {
 		msg = fmt.Sprintf("Nenhum registro encontrado para o email: %s ", email_usuario)
 		return false, msg, nil
 	}
-
-	// err = rows.Scan(&codigo)
-	// if err != nil {
-	// 	return false, err.Error(), err // Erro real
-	// }
 
 	// Sucesso - Encontrou
 	msg = fmt.Sprintf("Email: %s cadastrado", email_usuario)
@@ -215,6 +225,7 @@ func Usuario_Consultar_Email(email_usuario string) (bool, string, error) {
 
 func Usuario_Consultar_Login(login_usuario string) (bool, string, error) {
 	var msg string
+	var total int
 
 	db, err := Conectar()
 	if err != nil {
@@ -223,7 +234,11 @@ func Usuario_Consultar_Login(login_usuario string) (bool, string, error) {
 	}
 	defer db.Close()
 
-	query := "SELECT * FROM usuarios WHERE login = ?"
+	query := `
+	    SELECT COUNT(*)
+		  FROM usuarios
+		 WHERE login = ? 
+	`
 
 	rows, err := db.Query(query, login_usuario)
 	if err != nil {
@@ -231,50 +246,20 @@ func Usuario_Consultar_Login(login_usuario string) (bool, string, error) {
 	}
 	defer rows.Close()
 
-	if !rows.Next() {
-		msg = fmt.Sprintf("Nenhum registro encontrado para o login: %s ", login_usuario)
-		return false, msg, nil
+	rows.Next()
+
+	err = rows.Scan(&total)
+	if err != nil {
+		msg = "Erro ao validar login"
+		return false, msg, err // Erro real
 	}
 
-	// err = rows.Scan(&codigo)
-	// if err != nil {
-	// 	return false, err.Error(), err // Erro real
-	// }
+	if total == 0 {
+		msg = fmt.Sprintf("Nenhum registro encontrado para o email: %s ", login_usuario)
+		return false, msg, nil
+	}
 
 	// Sucesso - Encontrou
 	msg = fmt.Sprintf("Login: %s cadastrado", login_usuario)
 	return true, msg, nil
-}
-
-func Usuario_ultimo_id() (bool, string, error) {
-	var ultimoID, msg string
-
-	db, err := Conectar()
-	if err != nil {
-		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
-		return false, msg, err
-	}
-	defer db.Close()
-
-	// Busca o maior ID atual
-	query := "SELECT COALESCE(MAX(codigo), 0) FROM usuarios"
-
-	rows, err := db.Query(query)
-	if err != nil {
-		msg = fmt.Sprintf("Erro buscar o ultimo id: %s", err.Error())
-		return false, msg, err
-	}
-	defer rows.Close()
-
-	if !rows.Next() {
-		msg = fmt.Sprintf("Nenhum registro encontrado para o usuario: %s ", ultimoID)
-		return false, msg, nil
-	}
-
-	err = rows.Scan(&ultimoID)
-	if err != nil {
-		return false, err.Error(), err // Erro real
-	}
-
-	return true, ultimoID, nil
 }

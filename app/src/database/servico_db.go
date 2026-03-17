@@ -7,13 +7,13 @@ import (
 )
 
 // Servicos
-func Servico_Inserir(novo_servico models.Servico_input) (string, error) {
+func Servico_Inserir(novo_servico models.Servico_input) (int, string, error) {
 	var msg string
 
 	db, err := Conectar()
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
-		return msg, err
+		return 0, msg, err
 	}
 	defer db.Close()
 
@@ -25,24 +25,27 @@ func Servico_Inserir(novo_servico models.Servico_input) (string, error) {
 	stmt, err := db.Prepare(query)
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao preparar a query: %s", err.Error())
-		return msg, err
+		return 0, msg, err
 	}
 
 	res, err := stmt.Exec(novo_servico.Descricao, novo_servico.Valor)
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao executar a insercao: %s", err.Error())
-		return msg, err
+		return 0, msg, err
 	}
+	
+	id, err := res.LastInsertId()
+	//fmt.Println(id)
 
 	linhas, err := res.RowsAffected()
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao validar linhas afetadas: %s", err.Error())
-		return msg, err
+		return 0, msg, err
 	}
 
 	// fmt.Sprintf cria a string formatada
 	msg = fmt.Sprintf("Sucesso! %d linha(s) inserida(s).", linhas)
-	return msg, nil
+	return int(id), msg, nil
 }
 
 func Servico_Atualizar(codigo string, altera_servico models.Servico_input) (string, error) {
@@ -203,37 +206,4 @@ func Servico_Consultar_Descricao(descricao_servico string) (bool, string, error)
 	// Sucesso - Encontrou
 	msg = fmt.Sprintf("Servico %s encontrado", codigo)
 	return true, msg, nil
-}
-
-func Servico_ultimo_id() (bool, string, error) {
-	var ultimoID, msg string
-
-	db, err := Conectar()
-	if err != nil {
-		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
-		return false, msg, err
-	}
-	defer db.Close()
-
-	// Busca o maior ID atual
-	query := "SELECT COALESCE(MAX(codigo), 0) FROM servico"
-
-	rows, err := db.Query(query)
-	if err != nil {
-		msg = fmt.Sprintf("Erro buscar o ultimo id: %s", err.Error())
-		return false, msg, err
-	}
-	defer rows.Close()
-
-	if !rows.Next() {
-		msg = fmt.Sprintf("Nenhum registro encontrado para o servico: %s ", ultimoID)
-		return false, msg, nil
-	}
-
-	err = rows.Scan(&ultimoID)
-	if err != nil {
-		return false, err.Error(), err // Erro real
-	}
-
-	return true, ultimoID, nil
 }

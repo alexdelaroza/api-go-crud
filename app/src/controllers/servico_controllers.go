@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-go-crud/src/database"
 	"api-go-crud/src/models"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -57,7 +58,7 @@ func Insere_Servico(c *fiber.Ctx) error {
 
 	if !achou {
 		// Servico não existe -> INSERIR
-		msg, err := database.Servico_Inserir(novo_servico)
+		retorno_id, msg, err := database.Servico_Inserir(novo_servico)
 		if err != nil {
 			c.Status(fiber.StatusInternalServerError)
 			return c.JSON(fiber.Map{
@@ -68,16 +69,7 @@ func Insere_Servico(c *fiber.Ctx) error {
 
 		// log -> INSERIR
 		var novo_log models.Log_input
-		// busca ultimo id serviço
-		ok, retorno, err := database.Servico_ultimo_id()
-		if !ok {
-			c.Status(fiber.StatusNotFound)
-			return c.JSON(fiber.Map{
-				"retorno": retorno,
-				"error":   err.Error(),
-			})
-		}
-		novo_log.Codigo_recurso = retorno
+		novo_log.Codigo_recurso = strconv.Itoa(retorno_id)
 		novo_log.Criado_por = "1"
 		novo_log.Descricao = "insercao de servico"
 

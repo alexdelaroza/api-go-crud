@@ -23,5 +23,4 @@ func Setup(app *fiber.App) {
 
 	// Log
 	app.Get("/log", controllers.Consulta_Log)
-	// app.Get("/log/:data", controllers.Consulta_Log_Data)
 }

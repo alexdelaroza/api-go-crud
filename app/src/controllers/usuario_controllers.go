@@ -3,6 +3,7 @@ package controllers
 import (
 	"api-go-crud/src/database"
 	"api-go-crud/src/models"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -60,7 +61,7 @@ func Insere_Usuario(c *fiber.Ctx) error {
 		})
 	}
 
-	// Valida se o Email ja existe no Cadastro
+	//Valida se o Email ja existe no Cadastro
 	achou_email, msg_ret_email, err := database.Usuario_Consultar_Email(novo_usuario.Email)
 	if err != nil {
 		c.Status(fiber.StatusInternalServerError)
@@ -77,7 +78,7 @@ func Insere_Usuario(c *fiber.Ctx) error {
 	}
 
 	// Valida se o Login ja existe no Cadastro
-	achou_login, msg_ret_login, err := database.Usuario_Consultar_Login(novo_usuario.Login)
+	achou, msg_ret_login, err := database.Usuario_Consultar_Login(novo_usuario.Login)
 	if err != nil {
 		c.Status(fiber.StatusInternalServerError)
 		return c.JSON(fiber.Map{
@@ -85,7 +86,7 @@ func Insere_Usuario(c *fiber.Ctx) error {
 			"error":   err.Error(),
 		})
 	}
-	if achou_login {
+	if achou {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{
 			"message": msg_ret_login + " - Não será inserido",
@@ -93,7 +94,7 @@ func Insere_Usuario(c *fiber.Ctx) error {
 	}
 
 	// Usuário não existe -> INSERIR
-	msg, err := database.Usuario_Inserir(novo_usuario)
+	retorno_id, msg, err := database.Usuario_Inserir(novo_usuario)
 	if err != nil {
 		c.Status(fiber.StatusInternalServerError)
 		return c.JSON(fiber.Map{"error": err.Error()})
@@ -101,16 +102,7 @@ func Insere_Usuario(c *fiber.Ctx) error {
 
 	// log -> INSERIR
 	var novo_log models.Log_input
-	// busca ultimo id serviço
-	ok, retorno_id, err := database.Usuario_ultimo_id()
-	if !ok {
-		c.Status(fiber.StatusNotFound)
-		return c.JSON(fiber.Map{
-			"retorno": retorno_id,
-			"error":   err.Error(),
-		})
-	}
-	novo_log.Codigo_recurso = retorno_id
+	novo_log.Codigo_recurso = strconv.Itoa(retorno_id)
 	novo_log.Criado_por = "1"
 	novo_log.Descricao = "insercao de usuario"
 
