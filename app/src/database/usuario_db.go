@@ -116,7 +116,7 @@ func Usuario_Deletar(codigo_usuario string) (string, error) {
 	return msg, nil
 }
 
-func Usuario_Consultar() ([]models.Usuario_output, error, string) {
+func Usuario_Consultar() ([]models.Usuario_read, error, string) {
 	var msg string
 
 	db, err := Conectar()
@@ -126,9 +126,9 @@ func Usuario_Consultar() ([]models.Usuario_output, error, string) {
 	}
 	defer db.Close()
 
-	var usuarios []models.Usuario_output
+	var usuarios []models.Usuario_read
 	query := `
-		SELECT codigo, nome, login, senha, email, tipo, data_criacao_atu 
+		SELECT codigo, nome, login, email, data_criacao_atu 
 		FROM usuarios
 	`
 
@@ -139,8 +139,8 @@ func Usuario_Consultar() ([]models.Usuario_output, error, string) {
 	defer rows.Close()
 
 	for rows.Next() {
-		var u models.Usuario_output
-		err := rows.Scan(&u.Codigo, &u.Nome, &u.Login, &u.Senha, &u.Email, &u.Tipo, &u.Data_criacao_atu)
+		var u models.Usuario_read
+		err := rows.Scan(&u.Codigo, &u.Nome, &u.Login, &u.Email, &u.Data_criacao_atu)
 		if err != nil {
 			return nil, err, err.Error()
 		}
@@ -155,9 +155,9 @@ func Usuario_Consultar() ([]models.Usuario_output, error, string) {
 	return usuarios, nil, msg
 }
 
-func Usuario_Consultar_Codigo(codigo_usuario string) (models.Usuario_output, bool, error, string) {
+func Usuario_Consultar_Codigo(codigo_usuario string) (models.Usuario_read, bool, error, string) {
 	var msg string
-	var usuario models.Usuario_output
+	var usuario models.Usuario_read
 
 	db, err := Conectar()
 	if err != nil {
@@ -166,7 +166,7 @@ func Usuario_Consultar_Codigo(codigo_usuario string) (models.Usuario_output, boo
 	}
 	defer db.Close()
 
-	query := "select codigo, nome, login, senha, email, tipo, data_criacao_atu from usuarios where codigo = ?"
+	query := "select codigo, nome, login, email, data_criacao_atu from usuarios where codigo = ?"
 
 	rows, err := db.Query(query, codigo_usuario)
 	if err != nil {
@@ -179,7 +179,7 @@ func Usuario_Consultar_Codigo(codigo_usuario string) (models.Usuario_output, boo
 		return usuario, false, nil, msg
 	}
 
-	err = rows.Scan(&usuario.Codigo, &usuario.Nome, &usuario.Login, &usuario.Senha, &usuario.Email, &usuario.Tipo, &usuario.Data_criacao_atu)
+	err = rows.Scan(&usuario.Codigo, &usuario.Nome, &usuario.Login, &usuario.Email, &usuario.Data_criacao_atu)
 	if err != nil {
 		// Erro real
 		return usuario, false, err, err.Error()
