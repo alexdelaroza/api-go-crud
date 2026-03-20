@@ -33,7 +33,7 @@ func Servico_Inserir(novo_servico models.Servico_input) (int, string, error) {
 		msg = fmt.Sprintf("Erro ao executar a insercao: %s", err.Error())
 		return 0, msg, err
 	}
-	
+
 	id, err := res.LastInsertId()
 	//fmt.Println(id)
 

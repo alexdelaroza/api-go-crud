@@ -202,7 +202,7 @@ func Usuario_Consultar_Email(email_usuario string) (bool, string, error) {
 	defer db.Close()
 
 	query := `
-	    SELECT COUNT(*)
+	    SELECT COUNT(email)
 		  FROM usuarios
 		 WHERE email = ? 
 	`
@@ -243,7 +243,7 @@ func Usuario_Consultar_Login(login_usuario string) (bool, string, error) {
 	defer db.Close()
 
 	query := `
-	    SELECT COUNT(*)
+	    SELECT COUNT(login)
 		  FROM usuarios
 		 WHERE login = ? 
 	`
