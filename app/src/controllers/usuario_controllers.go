@@ -8,6 +8,19 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+func Valida_usuario_login(usuario models.Usuario_login) (bool, string) {
+
+	if usuario.Login == "" && usuario.Email == "" {
+		return false, "O campo 'email' ou 'login' é obrigatório e deve ser preenchido!"
+	}
+
+	if usuario.Senha == "" {
+		return false, "O campo 'senha' é obrigatório e deve ser preenchido!"
+	}
+
+	return true, ""
+}
+
 func Valida_usuario_input(usuario models.Usuario_input) (bool, string) {
 	if usuario.Nome == "" {
 		return false, "O campo 'nome' é obrigatório e deve ser preenchido!"
@@ -322,6 +335,48 @@ func Consulta_Usuario_Codigo(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{
 			"message": msg,
 			"user":    usuario, // Adiciona o objeto inteiro aqui
+		})
+	}
+}
+
+func Efetuar_Usuario_Login(c *fiber.Ctx) error {
+	var login_usuario models.Usuario_login
+
+	err := c.BodyParser(&login_usuario)
+	if err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"error": "JSON inválido",
+		})
+	}
+
+	// Valida Dados de Entrada
+	valido, msg_ret := Valida_usuario_login(login_usuario)
+	if !valido {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{"message": msg_ret})
+	}
+
+	achou, msg, err := database.Usuario_Efetuar_Login(login_usuario)
+	if err != nil {
+		c.Status(fiber.StatusInternalServerError)
+		return c.JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	if !achou {
+		// Login não é valido...
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"message": msg,
+		})
+	} else {
+		// Login é valido...
+		c.Status(fiber.StatusOK)
+		return c.JSON(fiber.Map{
+			"message": msg,
+			//"user":    login_usuario, // Adiciona o objeto inteiro aqui
 		})
 	}
 }

@@ -14,6 +14,9 @@ func Setup(app *fiber.App) {
 	app.Get("/usuario", controllers.Consulta_Usuario)
 	app.Get("/usuario/:id", controllers.Consulta_Usuario_Codigo)
 
+	// Login
+	app.Post("/login", controllers.Efetuar_Usuario_Login)
+
 	// Servicos
 	app.Post("/servico", controllers.Insere_Servico)
 	app.Put("/servico/:id", controllers.Atualiza_Servico)

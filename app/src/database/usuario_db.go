@@ -263,11 +263,55 @@ func Usuario_Consultar_Login(login_usuario string) (bool, string, error) {
 	}
 
 	if total == 0 {
-		msg = fmt.Sprintf("Nenhum registro encontrado para o email: %s ", login_usuario)
+		msg = fmt.Sprintf("Nenhum registro encontrado para o login: %s ", login_usuario)
 		return false, msg, nil
 	}
 
 	// Sucesso - Encontrou
 	msg = fmt.Sprintf("Login: %s cadastrado", login_usuario)
 	return true, msg, nil
+}
+
+func Usuario_Efetuar_Login(usuario models.Usuario_login) (bool, string, error) {
+	var msg string
+	var total int
+
+	db, err := Conectar()
+	if err != nil {
+		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
+		return false, msg, err
+	}
+	defer db.Close()
+
+	query := `
+	    SELECT COUNT(codigo) 
+		  FROM usuarios 
+		 WHERE (login = ? or ? = '') 
+		   AND (email = ? or ? = '')
+		   AND (senha = ? or ? = '')
+	`
+
+	rows, err := db.Query(query, usuario.Login, usuario.Login, usuario.Email, usuario.Email, usuario.Senha, usuario.Senha)
+	if err != nil {
+		return false, err.Error(), err
+	}
+	defer rows.Close()
+
+	rows.Next()
+
+	err = rows.Scan(&total)
+	if err != nil {
+		msg = "Erro ao validar login/email/senha"
+		return false, msg, err // Erro real
+	}
+
+	if total == 0 {
+		msg = fmt.Sprintf("Login: %s invalidado", usuario.Login)
+		return false, msg, nil
+	}
+
+	// Sucesso - Encontrou
+	msg = fmt.Sprintf("Login: %s validado", usuario.Login)
+	return true, msg, nil
+	// Sucesso - Encontrou
 }

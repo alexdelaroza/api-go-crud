@@ -29,3 +29,9 @@ type Usuario_read struct {
 	Email        string
 	Data_criacao_atu time.Time
 }
+
+type Usuario_login struct {
+	Login        string
+	Senha        string
+	Email        string
+}
