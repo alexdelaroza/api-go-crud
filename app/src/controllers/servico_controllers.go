@@ -8,7 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func Valida_servico_input(servico models.Servico_input) (bool, string) {
+func ValidarInputServicos(servico models.Servico_input) (bool, string) {
 	if servico.Descricao == "" {
 		return false, "O campo 'descricao' é obrigatório e deve ser preenchido!"
 	}
@@ -19,7 +19,7 @@ func Valida_servico_input(servico models.Servico_input) (bool, string) {
 	return true, ""
 }
 
-func Valida_servico_id(id string) (bool, string) {
+func ValidaIdServicos(id string) (bool, string) {
 	if id == "" {
 		return false, "O campo 'id' é obrigatório e deve ser preenchido!"
 	}
@@ -28,7 +28,7 @@ func Valida_servico_id(id string) (bool, string) {
 }
 
 // CRUD - Servico
-func Insere_Servico(c *fiber.Ctx) error {
+func InserirServicos(c *fiber.Ctx) error {
 	var novo_servico models.Servico_input
 
 	err := c.BodyParser(&novo_servico)
@@ -40,14 +40,14 @@ func Insere_Servico(c *fiber.Ctx) error {
 	}
 
 	// Valida Dados de Entrada
-	valido, msg_ret := Valida_servico_input(novo_servico)
+	valido, msg_ret := ValidarInputServicos(novo_servico)
 	if !valido {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{"message": msg_ret})
 	}
 
 	// Verificar se o Servico ja existe no Cadastro
-	achou, msg_ret, err := database.Servico_Consultar_Descricao(novo_servico.Descricao)
+	achou, msg_ret, err := database.ServicosConsultarDescricao(novo_servico.Descricao)
 	if err != nil {
 		c.Status(fiber.StatusInternalServerError)
 		return c.JSON(fiber.Map{
@@ -58,7 +58,7 @@ func Insere_Servico(c *fiber.Ctx) error {
 
 	if !achou {
 		// Servico não existe -> INSERIR
-		retorno_id, msg, err := database.Servico_Inserir(novo_servico)
+		retorno_id, msg, err := database.ServicosInserir(novo_servico)
 		if err != nil {
 			c.Status(fiber.StatusInternalServerError)
 			return c.JSON(fiber.Map{
@@ -96,7 +96,7 @@ func Insere_Servico(c *fiber.Ctx) error {
 	}
 }
 
-func Atualiza_Servico(c *fiber.Ctx) error {
+func AtualizarServicos(c *fiber.Ctx) error {
 	var altera_servico models.Servico_input
 
 	err := c.BodyParser(&altera_servico)
@@ -110,14 +110,14 @@ func Atualiza_Servico(c *fiber.Ctx) error {
 	var id string
 	id = c.Params("id")
 	// Valida Dados de Entrada
-	valido, msg_ret := Valida_servico_id(id)
+	valido, msg_ret := ValidaIdServicos(id)
 	if !valido {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{"message": msg_ret})
 	}
 
 	// Verificar se o Servico ja existe no Cadastro
-	_, achou, err, msg := database.Servico_Consultar_Codigo(id)
+	_, achou, err, msg := database.ServicosConsultarCodigo(id)
 	if err != nil {
 		c.Status(fiber.StatusInternalServerError)
 		return c.JSON(fiber.Map{"error": err.Error()})
@@ -132,7 +132,7 @@ func Atualiza_Servico(c *fiber.Ctx) error {
 		})
 	} else {
 		// Servico existe. Seguindo para alteração...
-		msg, err := database.Servico_Atualizar(id, altera_servico)
+		msg, err := database.ServicosAtualizar(id, altera_servico)
 		if err != nil {
 			c.Status(fiber.StatusInternalServerError)
 			return c.JSON(fiber.Map{
@@ -165,18 +165,18 @@ func Atualiza_Servico(c *fiber.Ctx) error {
 	}
 }
 
-func Deleta_Servico(c *fiber.Ctx) error {
+func DeletarServicos(c *fiber.Ctx) error {
 	var id string
 	id = c.Params("id")
 	// Valida Dados de Entrada
-	valido, msg_ret := Valida_servico_id(id)
+	valido, msg_ret := ValidaIdServicos(id)
 	if !valido {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{"message": msg_ret})
 	}
 
 	// Verificar se o Servico ja existe no Cadastro
-	_, achou, err, msg := database.Servico_Consultar_Codigo(id)
+	_, achou, err, msg := database.ServicosConsultarCodigo(id)
 	if err != nil {
 		c.Status(fiber.StatusInternalServerError)
 		return c.JSON(fiber.Map{"error": err.Error()})
@@ -191,7 +191,7 @@ func Deleta_Servico(c *fiber.Ctx) error {
 		})
 	} else {
 		// Servico existe -> exclusão...
-		msg, err := database.Servico_Deletar(id)
+		msg, err := database.ServicosDeletar(id)
 		if err != nil {
 			c.Status(fiber.StatusInternalServerError)
 			return c.JSON(fiber.Map{"error": err.Error()})
@@ -221,8 +221,8 @@ func Deleta_Servico(c *fiber.Ctx) error {
 	}
 }
 
-func Consulta_Servico(c *fiber.Ctx) error {
-	lista, err, msg := database.Servico_Consultar()
+func ConsultarServicos(c *fiber.Ctx) error {
+	lista, err, msg := database.ServicosConsultar()
 	if err != nil {
 		c.Status(fiber.StatusInternalServerError)
 		return c.JSON(fiber.Map{"error": err.Error()})
@@ -236,17 +236,17 @@ func Consulta_Servico(c *fiber.Ctx) error {
 	})
 }
 
-func Consulta_Servico_Codigo(c *fiber.Ctx) error {
+func ConsultarCodigoServicos(c *fiber.Ctx) error {
 	var id string
 	id = c.Params("id")
 	// Valida Dados de Entrada
-	valido, msg_ret := Valida_servico_id(id)
+	valido, msg_ret := ValidaIdServicos(id)
 	if !valido {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{"message": msg_ret})
 	}
 
-	servico, achou, err, msg := database.Servico_Consultar_Codigo(id)
+	servico, achou, err, msg := database.ServicosConsultarCodigo(id)
 	if err != nil {
 		c.Status(fiber.StatusInternalServerError)
 		return c.JSON(fiber.Map{"error": err.Error()})

@@ -7,7 +7,7 @@ import (
 )
 
 // Servicos
-func Servico_Inserir(novo_servico models.Servico_input) (int, string, error) {
+func ServicosInserir(novo_servico models.Servico_input) (int, string, error) {
 	var msg string
 
 	db, err := Conectar()
@@ -48,7 +48,7 @@ func Servico_Inserir(novo_servico models.Servico_input) (int, string, error) {
 	return int(id), msg, nil
 }
 
-func Servico_Atualizar(codigo string, altera_servico models.Servico_input) (string, error) {
+func ServicosAtualizar(codigo string, altera_servico models.Servico_input) (string, error) {
 	var msg string
 
 	db, err := Conectar()
@@ -77,7 +77,7 @@ func Servico_Atualizar(codigo string, altera_servico models.Servico_input) (stri
 	return msg, nil
 }
 
-func Servico_Deletar(codigo_servico string) (string, error) {
+func ServicosDeletar(codigo_servico string) (string, error) {
 	var msg string
 
 	db, err := Conectar()
@@ -103,7 +103,7 @@ func Servico_Deletar(codigo_servico string) (string, error) {
 	return msg, nil
 }
 
-func Servico_Consultar() ([]models.Servico_output, error, string) {
+func ServicosConsultar() ([]models.Servico_output, error, string) {
 	var msg string
 
 	db, err := Conectar()
@@ -140,7 +140,7 @@ func Servico_Consultar() ([]models.Servico_output, error, string) {
 	return servicos, nil, msg
 }
 
-func Servico_Consultar_Codigo(codigo_servico string) (models.Servico_output, bool, error, string) {
+func ServicosConsultarCodigo(codigo_servico string) (models.Servico_output, bool, error, string) {
 	var msg string
 
 	var servico models.Servico_output
@@ -175,7 +175,7 @@ func Servico_Consultar_Codigo(codigo_servico string) (models.Servico_output, boo
 	return servico, true, nil, msg
 }
 
-func Servico_Consultar_Descricao(descricao_servico string) (bool, string, error) {
+func ServicosConsultarDescricao(descricao_servico string) (bool, string, error) {
 	var msg, codigo string
 
 	db, err := Conectar()

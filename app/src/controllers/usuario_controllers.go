@@ -4,10 +4,13 @@ import (
 	"api-go-crud/src/database"
 	"api-go-crud/src/models"
 	"strconv"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
 )
 
+// Login - Usuarios
 func Valida_usuario_login(usuario models.Usuario_login) (bool, string) {
 
 	if usuario.Login == "" && usuario.Email == "" {
@@ -21,6 +24,23 @@ func Valida_usuario_login(usuario models.Usuario_login) (bool, string) {
 	return true, ""
 }
 
+func CriarToken(usuarioID string) (string, error) {
+	claims := jwt.MapClaims{
+		"user_id": usuarioID,
+		"exp":     time.Now().Add(time.Minute * 5).Unix(),
+	}
+
+	var JwtSecret = []byte("minha_chave_secreta_123")
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	t, err := token.SignedString(JwtSecret)
+	if err != nil {
+		return "Erro ao gerar token", err
+	}
+	return t, nil
+}
+
+// Validacoes - Usuarios
 func Valida_usuario_input(usuario models.Usuario_input) (bool, string) {
 	if usuario.Nome == "" {
 		return false, "O campo 'nome' é obrigatório e deve ser preenchido!"
@@ -54,7 +74,7 @@ func Valida_usuario_id(id string) (bool, string) {
 }
 
 // CRUD - Usuarios
-func Insere_Usuario(c *fiber.Ctx) error {
+func InserirUsuarios(c *fiber.Ctx) error {
 	var novo_usuario models.Usuario_input
 
 	err := c.BodyParser(&novo_usuario)
@@ -136,7 +156,7 @@ func Insere_Usuario(c *fiber.Ctx) error {
 
 }
 
-func Atualiza_Usuario(c *fiber.Ctx) error {
+func AtualizarUsuarios(c *fiber.Ctx) error {
 	var altera_usuario models.Usuario_input
 	err := c.BodyParser(&altera_usuario)
 	if err != nil {
@@ -234,7 +254,7 @@ func Atualiza_Usuario(c *fiber.Ctx) error {
 	}
 }
 
-func Deleta_Usuario(c *fiber.Ctx) error {
+func DeletarUsuarios(c *fiber.Ctx) error {
 	var id string
 	id = c.Params("id")
 
@@ -291,7 +311,7 @@ func Deleta_Usuario(c *fiber.Ctx) error {
 	}
 }
 
-func Consulta_Usuario(c *fiber.Ctx) error {
+func ListarUsuarios(c *fiber.Ctx) error {
 	lista, err, msg := database.Usuario_Consultar()
 	if err != nil {
 		c.Status(fiber.StatusInternalServerError)
@@ -306,7 +326,7 @@ func Consulta_Usuario(c *fiber.Ctx) error {
 	})
 }
 
-func Consulta_Usuario_Codigo(c *fiber.Ctx) error {
+func ConsultarCodigoUsuarios(c *fiber.Ctx) error {
 	var id string
 	id = c.Params("id")
 
@@ -339,7 +359,7 @@ func Consulta_Usuario_Codigo(c *fiber.Ctx) error {
 	}
 }
 
-func Efetuar_Usuario_Login(c *fiber.Ctx) error {
+func EfetuarLoginUsuarios(c *fiber.Ctx) error {
 	var login_usuario models.Usuario_login
 
 	err := c.BodyParser(&login_usuario)
@@ -357,7 +377,8 @@ func Efetuar_Usuario_Login(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{"message": msg_ret})
 	}
 
-	achou, msg, err := database.Usuario_Efetuar_Login(login_usuario)
+	// Valida Usuario e Senha no banco de dados
+	achou, msg, usuarioID, err := database.Usuario_Efetuar_Login(login_usuario)
 	if err != nil {
 		c.Status(fiber.StatusInternalServerError)
 		return c.JSON(fiber.Map{
@@ -371,12 +392,22 @@ func Efetuar_Usuario_Login(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{
 			"message": msg,
 		})
-	} else {
-		// Login é valido...
-		c.Status(fiber.StatusOK)
+	}
+
+	// Login é valido...
+	retorno, err := CriarToken(usuarioID)
+	if err != nil {
+		c.Status(fiber.StatusInternalServerError)
 		return c.JSON(fiber.Map{
-			"message": msg,
-			//"user":    login_usuario, // Adiciona o objeto inteiro aqui
+			"message": retorno,
+			"error":   err.Error(),
 		})
 	}
+
+	c.Status(fiber.StatusOK)
+	return c.JSON(fiber.Map{
+		"message": msg,
+		"token":   retorno, // Adiciona o objeto inteiro aqui
+	})
+
 }
