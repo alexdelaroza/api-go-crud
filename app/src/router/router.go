@@ -1,4 +1,4 @@
-package roteador
+package router
 
 import (
 	"api-go-crud/src/controllers"
@@ -16,7 +16,7 @@ func Setup(app *fiber.App) {
 
 	// Login
 	app.Post("/login", controllers.EfetuarLoginUsuarios)
-	
+
 	// Servicos
 	app.Post("/servicos", controllers.InserirServicos)
 	app.Put("/servicos/:id", controllers.AtualizarServicos)

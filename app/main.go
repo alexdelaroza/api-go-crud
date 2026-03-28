@@ -1,18 +1,28 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/gofiber/fiber/v2"
 
-	"api-go-crud/src/roteador"
+	"api-go-crud/src/config"
+	"api-go-crud/src/router"
 )
 
 func main() {
 	//database.Create_table()
 
+	// Carrega as Variavei de Ambiente
+	config.CarregarConfig()
+
 	// cria a instancia do WEB server
 	app := fiber.New()
+
 	// setup app routes
-	roteador.Setup(app)
+	router.Setup(app)
+
 	// iniciamos o seridor
-	app.Listen(":3000")
+	app.Listen(fmt.Sprintf(":%d", config.Porta))
+	//app.Listen(":3000")
+	fmt.Println("Escutando na Porta:", config.Porta)
 }

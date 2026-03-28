@@ -1,13 +1,12 @@
 package controllers
 
 import (
+	"api-go-crud/src/authentication"
 	"api-go-crud/src/database"
 	"api-go-crud/src/models"
 	"strconv"
-	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt/v5"
 )
 
 // Login - Usuarios
@@ -22,22 +21,6 @@ func Valida_usuario_login(usuario models.Usuario_login) (bool, string) {
 	}
 
 	return true, ""
-}
-
-func CriarToken(usuarioID string) (string, error) {
-	claims := jwt.MapClaims{
-		"user_id": usuarioID,
-		"exp":     time.Now().Add(time.Minute * 5).Unix(),
-	}
-
-	var JwtSecret = []byte("minha_chave_secreta_123")
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	t, err := token.SignedString(JwtSecret)
-	if err != nil {
-		return "Erro ao gerar token", err
-	}
-	return t, nil
 }
 
 // Validacoes - Usuarios
@@ -395,7 +378,7 @@ func EfetuarLoginUsuarios(c *fiber.Ctx) error {
 	}
 
 	// Login é valido...
-	retorno, err := CriarToken(usuarioID)
+	retorno, err := authentication.CriarToken(usuarioID)
 	if err != nil {
 		c.Status(fiber.StatusInternalServerError)
 		return c.JSON(fiber.Map{
