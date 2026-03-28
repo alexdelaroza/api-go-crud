@@ -4,57 +4,11 @@ import (
 	"api-go-crud/src/authentication"
 	"api-go-crud/src/database"
 	"api-go-crud/src/models"
+	"api-go-crud/src/validation"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 )
-
-// Login - Usuarios
-func Valida_usuario_login(usuario models.Usuario_login) (bool, string) {
-
-	if usuario.Login == "" && usuario.Email == "" {
-		return false, "O campo 'email' ou 'login' é obrigatório e deve ser preenchido!"
-	}
-
-	if usuario.Senha == "" {
-		return false, "O campo 'senha' é obrigatório e deve ser preenchido!"
-	}
-
-	return true, ""
-}
-
-// Validacoes - Usuarios
-func Valida_usuario_input(usuario models.Usuario_input) (bool, string) {
-	if usuario.Nome == "" {
-		return false, "O campo 'nome' é obrigatório e deve ser preenchido!"
-	}
-
-	if usuario.Login == "" {
-		return false, "O campo 'login' é obrigatório e deve ser preenchido!"
-	}
-
-	if usuario.Senha == "" {
-		return false, "O campo 'senha' é obrigatório e deve ser preenchido!"
-	}
-
-	if usuario.Email == "" {
-		return false, "O campo 'email' é obrigatório e deve ser preenchido!"
-	}
-
-	if usuario.Tipo == "" {
-		return false, "O campo 'tipo' é obrigatório e deve ser preenchido!"
-	}
-
-	return true, ""
-}
-
-func Valida_usuario_id(id string) (bool, string) {
-	if id == "" {
-		return false, "O campo 'id' é obrigatório e deve ser preenchido!"
-	}
-
-	return true, ""
-}
 
 // CRUD - Usuarios
 func InserirUsuarios(c *fiber.Ctx) error {
@@ -69,7 +23,7 @@ func InserirUsuarios(c *fiber.Ctx) error {
 	}
 
 	// Valida Dados de Entrada
-	valido, msg_ret_ent := Valida_usuario_input(novo_usuario)
+	valido, msg_ret_ent := validation.ValidarInputUsuario(novo_usuario)
 	if !valido {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{
@@ -152,7 +106,7 @@ func AtualizarUsuarios(c *fiber.Ctx) error {
 	var id string
 	id = c.Params("id")
 	// Valida Dados de Entrada
-	valido, msg_ret := Valida_usuario_id(id)
+	valido, msg_ret := validation.ValidarId(id)
 	if !valido {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{"message": msg_ret})
@@ -242,7 +196,7 @@ func DeletarUsuarios(c *fiber.Ctx) error {
 	id = c.Params("id")
 
 	// Valida Dados de Entrada
-	valido, msg_ret := Valida_usuario_id(id)
+	valido, msg_ret := validation.ValidarId(id)
 	if !valido {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{"message": msg_ret})
@@ -314,7 +268,7 @@ func ConsultarCodigoUsuarios(c *fiber.Ctx) error {
 	id = c.Params("id")
 
 	// Valida Dados de Entrada
-	valido, msg_ret := Valida_usuario_id(id)
+	valido, msg_ret := validation.ValidarId(id)
 	if !valido {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{"message": msg_ret})
@@ -354,7 +308,7 @@ func EfetuarLoginUsuarios(c *fiber.Ctx) error {
 	}
 
 	// Valida Dados de Entrada
-	valido, msg_ret := Valida_usuario_login(login_usuario)
+	valido, msg_ret := validation.ValidaLoginUsuario(login_usuario)
 	if !valido {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{"message": msg_ret})

@@ -33,11 +33,12 @@ func CarregarConfig() {
 		fmt.Println("ERRO - A Porta foi alterada para:", Porta)
 	}
 
-	StringConexaoBanco = fmt.Sprintf("%s.%s.@%s?charset=utf8&parseTime=True&loc=Local",
+	StringConexaoBanco = fmt.Sprintf("%s:%s@/%s?charset=utf8&parseTime=True&loc=Local",
 		os.Getenv("DB_USUARIO"),
 		os.Getenv("DB_SENHA"),
 		os.Getenv("DB_BANCO"),
 	)
+	fmt.Printf("Banco de Dados\n  Usuário: %s\n  Banco..: %s\n", os.Getenv("DB_USUARIO"), os.Getenv("DB_BANCO"))
 
 	JwtSecret = []byte(os.Getenv("JWTSECRET_KEY"))
 }

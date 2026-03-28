@@ -3,29 +3,11 @@ package controllers
 import (
 	"api-go-crud/src/database"
 	"api-go-crud/src/models"
+	"api-go-crud/src/validation"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 )
-
-func ValidarInputServicos(servico models.Servico_input) (bool, string) {
-	if servico.Descricao == "" {
-		return false, "O campo 'descricao' é obrigatório e deve ser preenchido!"
-	}
-
-	if servico.Valor == 0 {
-		return false, "O campo 'valor' é obrigatório e deve ser preenchido!"
-	}
-	return true, ""
-}
-
-func ValidaIdServicos(id string) (bool, string) {
-	if id == "" {
-		return false, "O campo 'id' é obrigatório e deve ser preenchido!"
-	}
-
-	return true, ""
-}
 
 // CRUD - Servico
 func InserirServicos(c *fiber.Ctx) error {
@@ -40,7 +22,7 @@ func InserirServicos(c *fiber.Ctx) error {
 	}
 
 	// Valida Dados de Entrada
-	valido, msg_ret := ValidarInputServicos(novo_servico)
+	valido, msg_ret := validation.ValidarInputServicos(novo_servico)
 	if !valido {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{"message": msg_ret})
@@ -110,7 +92,7 @@ func AtualizarServicos(c *fiber.Ctx) error {
 	var id string
 	id = c.Params("id")
 	// Valida Dados de Entrada
-	valido, msg_ret := ValidaIdServicos(id)
+	valido, msg_ret := validation.ValidarId(id)
 	if !valido {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{"message": msg_ret})
@@ -169,7 +151,7 @@ func DeletarServicos(c *fiber.Ctx) error {
 	var id string
 	id = c.Params("id")
 	// Valida Dados de Entrada
-	valido, msg_ret := ValidaIdServicos(id)
+	valido, msg_ret := validation.ValidarId(id)
 	if !valido {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{"message": msg_ret})
@@ -240,7 +222,7 @@ func ConsultarCodigoServicos(c *fiber.Ctx) error {
 	var id string
 	id = c.Params("id")
 	// Valida Dados de Entrada
-	valido, msg_ret := ValidaIdServicos(id)
+	valido, msg_ret := validation.ValidarId(id)
 	if !valido {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{"message": msg_ret})
