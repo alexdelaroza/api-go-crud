@@ -10,7 +10,7 @@ import (
 func Usuario_Inserir(novo_usuario models.Usuario_input) (int, string, error) {
 	var msg string
 
-	db, err := Conectar()
+	db, err := ConectarDb()
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
 		return 0, msg, err
@@ -56,7 +56,7 @@ func Usuario_Inserir(novo_usuario models.Usuario_input) (int, string, error) {
 func Usuario_Atualizar(codigo string, altera_usuario models.Usuario_input) (string, error) {
 	var msg string
 
-	db, err := Conectar()
+	db, err := ConectarDb()
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
 		return msg, err
@@ -90,7 +90,7 @@ func Usuario_Atualizar(codigo string, altera_usuario models.Usuario_input) (stri
 func Usuario_Deletar(codigo_usuario string) (string, error) {
 	var msg string
 
-	db, err := Conectar()
+	db, err := ConectarDb()
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
 		return msg, err
@@ -119,7 +119,7 @@ func Usuario_Deletar(codigo_usuario string) (string, error) {
 func Usuario_Consultar() ([]models.Usuario_read, error, string) {
 	var msg string
 
-	db, err := Conectar()
+	db, err := ConectarDb()
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
 		return nil, err, msg
@@ -159,7 +159,7 @@ func Usuario_Consultar_Codigo(codigo_usuario string) (models.Usuario_read, bool,
 	var msg string
 	var usuario models.Usuario_read
 
-	db, err := Conectar()
+	db, err := ConectarDb()
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
 		return usuario, false, err, msg
@@ -194,7 +194,7 @@ func Usuario_Consultar_Email(email_usuario string) (bool, string, error) {
 	var msg string
 	var total int
 
-	db, err := Conectar()
+	db, err := ConectarDb()
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
 		return false, msg, err
@@ -235,7 +235,7 @@ func Usuario_Consultar_Login(login_usuario string) (bool, string, error) {
 	var msg string
 	var total int
 
-	db, err := Conectar()
+	db, err := ConectarDb()
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
 		return false, msg, err
@@ -276,7 +276,7 @@ func Usuario_Efetuar_Login(usuario models.Usuario_login) (bool, string, string, 
 	var msg string
 	var usuarioID string
 
-	db, err := Conectar()
+	db, err := ConectarDb()
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
 		return false, msg, "", err

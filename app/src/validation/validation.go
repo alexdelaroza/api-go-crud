@@ -3,6 +3,7 @@ package validation
 import (
 	"api-go-crud/src/models"
 	"fmt"
+	"strings"
 	"time"
 )
 
@@ -34,7 +35,11 @@ func ValidarData(dateStr1, dateStr2 string) (bool, string) {
 }
 
 func ValidarId(id string) (bool, string) {
-	if id == "" {
+	// 1. Limpa os espaços primeiro
+	idLimpo := strings.TrimSpace(id)
+
+	// 2. Verifica se sobrou algo após a limpeza
+	if idLimpo == "" {
 		return false, "O campo 'id' é obrigatório e deve ser preenchido!"
 	}
 
@@ -42,22 +47,35 @@ func ValidarId(id string) (bool, string) {
 }
 
 // Validacoes - Servicos
-func ValidarInputServicos(servico models.Servico_input) (bool, string) {
-	if servico.Descricao == "" {
+func ValidarInputServicos(servicos *models.Servico_input) (bool, string) {
+	// Limpa os espaços primeiro
+	servicos.Descricao = strings.TrimSpace(servicos.Descricao)
+
+	if servicos.Descricao == "" {
 		return false, "O campo 'descricao' é obrigatório e deve ser preenchido!"
 	}
 
-	if servico.Valor == 0 {
-		return false, "O campo 'valor' é obrigatório e deve ser preenchido!"
+	if servicos.Valor <= 0 {
+		return false, "O campo 'valor' deve ser maior que zero!"
 	}
+
 	return true, ""
 }
 
 // Validacoes - Usuarios
-func ValidaLoginUsuario(usuario models.Usuario_login) (bool, string) {
+func ValidaLoginUsuarios(usuario *models.Usuario_login) (bool, string) {
+	// Limpa os espaços e converte o e-mail para minúsculas
+	usuario.Login = strings.TrimSpace(usuario.Login)
+	//usuario.Email = strings.TrimSpace(strings.ToLower(usuario.Email)) // <-- Conversão para minúsculas
+	usuario.Email = strings.TrimSpace(usuario.Email)
+	usuario.Senha = strings.TrimSpace(usuario.Senha)
 
 	if usuario.Login == "" && usuario.Email == "" {
 		return false, "O campo 'email' ou 'login' é obrigatório e deve ser preenchido!"
+	}
+
+	if usuario.Email != "" && !strings.Contains(usuario.Email, "@") {
+		return false, "O e-mail informado é inválido!"
 	}
 
 	if usuario.Senha == "" {
@@ -67,7 +85,14 @@ func ValidaLoginUsuario(usuario models.Usuario_login) (bool, string) {
 	return true, ""
 }
 
-func ValidarInputUsuario(usuario models.Usuario_input) (bool, string) {
+func ValidarInputUsuarios(usuario *models.Usuario_input) (bool, string) {
+	// Limpa os campos primeiro
+	usuario.Nome = strings.TrimSpace(usuario.Nome)
+	usuario.Login = strings.TrimSpace(usuario.Login)
+	usuario.Senha = strings.TrimSpace(usuario.Senha)
+	usuario.Email = strings.TrimSpace(usuario.Email)
+	usuario.Tipo = strings.TrimSpace(usuario.Tipo)
+
 	if usuario.Nome == "" {
 		return false, "O campo 'nome' é obrigatório e deve ser preenchido!"
 	}
@@ -82,6 +107,10 @@ func ValidarInputUsuario(usuario models.Usuario_input) (bool, string) {
 
 	if usuario.Email == "" {
 		return false, "O campo 'email' é obrigatório e deve ser preenchido!"
+	}
+
+	if !strings.Contains(usuario.Email, "@") {
+		return false, "O e-mail informado é inválido!"
 	}
 
 	if usuario.Tipo == "" {

@@ -12,17 +12,15 @@ import (
 func main() {
 	//database.Create_table()
 
-	// Carrega as Variavei de Ambiente
+	// Carregar as Variavei de Ambiente
 	config.CarregarConfig()
 
 	// cria a instancia do WEB server
 	app := fiber.New()
-
 	// setup app routes
 	router.Setup(app)
-
 	// iniciamos o seridor
-	app.Listen(fmt.Sprintf(":%d", config.Porta))
-	//app.Listen(":3000")
 	fmt.Println("Escutando na Porta:", config.Porta)
+	app.Listen(fmt.Sprintf(":%d", config.Porta))
+
 }

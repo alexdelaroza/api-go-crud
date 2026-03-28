@@ -8,9 +8,7 @@ import (
 )
 
 // Abre aconexão com o banco de dados
-func Conectar() (*sql.DB, error) {
-	//stringConexaoBanco := "root:root@/crud_db?parseTime=True"
-
+func ConectarDb() (*sql.DB, error) {
 	db, erro := sql.Open("mysql", config.StringConexaoBanco)
 	if erro != nil {
 		return nil, erro
@@ -20,6 +18,5 @@ func Conectar() (*sql.DB, error) {
 		db.Close()
 		return nil, erro
 	}
-
 	return db, nil
 }

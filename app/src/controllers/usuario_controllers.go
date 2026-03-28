@@ -23,7 +23,9 @@ func InserirUsuarios(c *fiber.Ctx) error {
 	}
 
 	// Valida Dados de Entrada
-	valido, msg_ret_ent := validation.ValidarInputUsuario(novo_usuario)
+	// Como a função pede um ponteiro (*models.Usuario_input), você usa o símbolo "&"" na frente da variável.
+	// & <-- passa o "endereço" da variável
+	valido, msg_ret_ent := validation.ValidarInputUsuarios(&novo_usuario)
 	if !valido {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{
@@ -308,7 +310,7 @@ func EfetuarLoginUsuarios(c *fiber.Ctx) error {
 	}
 
 	// Valida Dados de Entrada
-	valido, msg_ret := validation.ValidaLoginUsuario(login_usuario)
+	valido, msg_ret := validation.ValidaLoginUsuarios(&login_usuario)
 	if !valido {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{"message": msg_ret})

@@ -14,7 +14,7 @@ func exec(db *sql.DB, sql string) sql.Result {
 }
 
 func Create_table() {
-	db, err := Conectar()
+	db, err := ConectarDb()
 	if err != nil {
 		log.Fatal("Erro ao conectar:", err)
 	}

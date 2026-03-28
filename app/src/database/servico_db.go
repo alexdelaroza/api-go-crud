@@ -10,7 +10,7 @@ import (
 func ServicosInserir(novo_servico models.Servico_input) (int, string, error) {
 	var msg string
 
-	db, err := Conectar()
+	db, err := ConectarDb()
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
 		return 0, msg, err
@@ -51,7 +51,7 @@ func ServicosInserir(novo_servico models.Servico_input) (int, string, error) {
 func ServicosAtualizar(codigo string, altera_servico models.Servico_input) (string, error) {
 	var msg string
 
-	db, err := Conectar()
+	db, err := ConectarDb()
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
 		return msg, err
@@ -80,7 +80,7 @@ func ServicosAtualizar(codigo string, altera_servico models.Servico_input) (stri
 func ServicosDeletar(codigo_servico string) (string, error) {
 	var msg string
 
-	db, err := Conectar()
+	db, err := ConectarDb()
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
 		return msg, err
@@ -106,7 +106,7 @@ func ServicosDeletar(codigo_servico string) (string, error) {
 func ServicosConsultar() ([]models.Servico_output, error, string) {
 	var msg string
 
-	db, err := Conectar()
+	db, err := ConectarDb()
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
 		return nil, err, msg
@@ -144,7 +144,7 @@ func ServicosConsultarCodigo(codigo_servico string) (models.Servico_output, bool
 	var msg string
 
 	var servico models.Servico_output
-	db, err := Conectar()
+	db, err := ConectarDb()
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
 		return servico, false, err, msg
@@ -178,7 +178,7 @@ func ServicosConsultarCodigo(codigo_servico string) (models.Servico_output, bool
 func ServicosConsultarDescricao(descricao_servico string) (bool, string, error) {
 	var msg, codigo string
 
-	db, err := Conectar()
+	db, err := ConectarDb()
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
 		return false, msg, err

@@ -10,7 +10,7 @@ import (
 func Log_Inserir(input_log models.Log_input) (string, error) {
 	var msg string
 
-	db, err := Conectar()
+	db, err := ConectarDb()
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
 		return msg, err
@@ -49,7 +49,7 @@ func Log_Inserir(input_log models.Log_input) (string, error) {
 func Log_Consultar(codigo_recurso, dataInicio, dataFim string) ([]models.Log_output, bool, error, string) {
 	var msg string
 
-	db, err := Conectar()
+	db, err := ConectarDb()
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
 		return nil, false, err, msg
