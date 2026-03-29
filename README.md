@@ -6,7 +6,8 @@ Rotas:
 
 /login:
   Método: POST
-  Descrição: Recebe o login e senha do usuário, verifica se estão corretos no banco de dados. Em caso positivo, gera um token jwt.
+  Descrição: Recebe o login e senha do usuário, verifica se estão corretos no banco de dados. 
+             Em caso positivo, gera um token jwt.
   Autenticado: Não
 
 
