@@ -22,7 +22,7 @@ func InserirServicos(c *fiber.Ctx) error {
 	}
 
 	// Valida Dados de Entrada
-	valido, msg_ret := validation.ValidarInputServicos(&novo_servico)
+	valido, msg_ret := validation.ValidarInputServicos(novo_servico)
 	if !valido {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{"message": msg_ret})

@@ -21,24 +21,22 @@ func ValidarData(dateStr1, dateStr2 string) (bool, string) {
 		return false, "ERRO: Formato da Data-Fim inválido (use AAAA-MM-DD)"
 	}
 
-	// Data de início for MAIOR que Data de fim, é INVÁLIDO
-	if t1.After(t2) {
-		msg := fmt.Sprintf("Data de Início (%s) não pode ser maior que a Data de Fim (%s)", dateStr1, dateStr2)
-		return false, msg // Retorna FALSE para bloquear o processo
-	}
-
-	if t1.Equal(t2) {
+	switch {
+	case t1.After(t2):
+		return false, fmt.Sprintf("Data de Início (%s) não pode ser maior que a Data de Fim (%s)", dateStr1, dateStr2)
+	case t1.Equal(t2):
 		return true, "As datas são iguais (Válidas)"
+	default:
+		return true, "As datas são válidas"
 	}
 
-	return true, "As datas são válidas"
 }
 
 func ValidarId(id string) (bool, string) {
-	// 1. Limpa os espaços primeiro
+	//Limpa os espaços do id
 	idLimpo := strings.TrimSpace(id)
 
-	// 2. Verifica se sobrou algo após a limpeza
+	//Verifica se id esta preenchido
 	if idLimpo == "" {
 		return false, "O campo 'id' é obrigatório e deve ser preenchido!"
 	}
@@ -47,9 +45,8 @@ func ValidarId(id string) (bool, string) {
 }
 
 // Validacoes - Servicos
-func ValidarInputServicos(servicos *models.Servico_input) (bool, string) {
-	// Limpa os espaços primeiro
-	servicos.Descricao = strings.TrimSpace(servicos.Descricao)
+func ValidarInputServicos(servicos models.Servico_input) (bool, string) {
+	LimparInputServicos(&servicos)
 
 	if servicos.Descricao == "" {
 		return false, "O campo 'descricao' é obrigatório e deve ser preenchido!"
@@ -62,13 +59,15 @@ func ValidarInputServicos(servicos *models.Servico_input) (bool, string) {
 	return true, ""
 }
 
+func LimparInputServicos(servicos *models.Servico_input) {
+	// Limpa os espaços dos campos
+	servicos.Descricao = strings.TrimSpace(servicos.Descricao)
+
+}
+
 // Validacoes - Usuarios
-func ValidaLoginUsuarios(usuario *models.Usuario_login) (bool, string) {
-	// Limpa os espaços e converte o e-mail para minúsculas
-	usuario.Login = strings.TrimSpace(usuario.Login)
-	//usuario.Email = strings.TrimSpace(strings.ToLower(usuario.Email)) // <-- Conversão para minúsculas
-	usuario.Email = strings.TrimSpace(usuario.Email)
-	usuario.Senha = strings.TrimSpace(usuario.Senha)
+func ValidaLoginUsuarios(usuario models.Usuario_login) (bool, string) {
+	LimparLoginUsuarios(&usuario)
 
 	if usuario.Login == "" && usuario.Email == "" {
 		return false, "O campo 'email' ou 'login' é obrigatório e deve ser preenchido!"
@@ -85,13 +84,17 @@ func ValidaLoginUsuarios(usuario *models.Usuario_login) (bool, string) {
 	return true, ""
 }
 
-func ValidarInputUsuarios(usuario *models.Usuario_input) (bool, string) {
-	// Limpa os campos primeiro
-	usuario.Nome = strings.TrimSpace(usuario.Nome)
+func LimparLoginUsuarios(usuario *models.Usuario_login) {
+	// Limpa os espaços dos campos
+	//usuario.Email = strings.TrimSpace(strings.ToLower(usuario.Email)) // <-- Conversão para minúsculas
 	usuario.Login = strings.TrimSpace(usuario.Login)
-	usuario.Senha = strings.TrimSpace(usuario.Senha)
 	usuario.Email = strings.TrimSpace(usuario.Email)
-	usuario.Tipo = strings.TrimSpace(usuario.Tipo)
+	usuario.Senha = strings.TrimSpace(usuario.Senha)
+
+}
+
+func ValidarInputUsuarios(usuario models.Usuario_input) (bool, string) {
+	LimparInputUsuarios(&usuario)
 
 	if usuario.Nome == "" {
 		return false, "O campo 'nome' é obrigatório e deve ser preenchido!"
@@ -118,4 +121,13 @@ func ValidarInputUsuarios(usuario *models.Usuario_input) (bool, string) {
 	}
 
 	return true, ""
+}
+
+func LimparInputUsuarios(usuario *models.Usuario_input) {
+	// Limpa os espaços dos campos
+	usuario.Nome = strings.TrimSpace(usuario.Nome)
+	usuario.Login = strings.TrimSpace(usuario.Login)
+	usuario.Senha = strings.TrimSpace(usuario.Senha)
+	usuario.Email = strings.TrimSpace(usuario.Email)
+	usuario.Tipo = strings.TrimSpace(usuario.Tipo)
 }
