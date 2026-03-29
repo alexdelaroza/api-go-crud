@@ -1,111 +1,62 @@
-# api-go-crud
-API em Golang e Fiber - Para efetuar CRUD em banco de dados MySQL
+# 🚀 API de Gestão de Usuários e Serviços
+
+API desenvolvida em **Go (Golang)** utilizando o framework **Fiber** para operações de CRUD em banco de dados **MySQL**.
+
+## 📌 Rotas da API
+
+### 🔐 Autenticação
+
+| Rota | Método | Descrição | Autenticado |
+| :--- | :--- | :--- | :---: |
+| `/login` | `POST` | Valida credenciais e gera token JWT | Não |
+
+### 👥 Usuários
+
+| Rota | Método | Descrição | Autenticado |
+| :--- | :--- | :--- | :---: |
+| `/usuarios` | `POST` | Cria um novo usuário | Sim |
+| `/usuarios` | `GET` | Retorna todos os usuários (sem senha, paginado) | Sim |
+| `/usuarios/{id}` | `GET` | Retorna dados de um usuário específico | Sim |
+| `/usuarios/{id}` | `PUT` | Atualiza dados de um usuário específico | Sim |
+| `/usuarios/{id}` | `DELETE` | Exclui um usuário específico | Sim |
+
+### 🛠️ Serviços
+
+| Rota | Método | Descrição | Autenticado |
+| :--- | :--- | :--- | :---: |
+| `/servicos` | `POST` | Cria um novo serviço | Sim |
+| `/servicos` | `GET` | Retorna todos os serviços (paginado) | Sim |
+| `/servicos/{id}` | `GET` | Retorna dados de um serviço específico | Sim |
+| `/servicos/{id}` | `PUT` | Atualiza dados de um serviço específico | Sim |
+| `/servicos/{id}` | `DELETE` | Exclui um serviço específico | Sim |
+
+### 📜 Logs (Apenas ADMIN)
+
+| Rota | Método | Descrição |
+| :--- | :--- | :--- |
+| `/logs/{id}` | `GET` | Retorna dados de um log específico |
+| `/logs?data={d}&tipo={t}&id-recurso={ir}` | `GET` | Filtro de logs (Data obrigatória, paginado) |
+
+---
+
+## 📅 Cronograma de Desenvolvimento
 
 
-Rotas:
+| Fase | Entrega | Tarefas |
+| :--- | :---: | :--- |
+| **1. Banco de Dados** | 30/01 | Criar tabelas e inserir usuário ADMIN padrão. |
+| **2. Cadastro de Usuários** | 06/02 | CRUD completo de usuários. |
+| **3. Cadastro de Serviços** | 13/02 | CRUD completo de serviços. |
+| **4. Logs** | 20/02 | Implementação de registros de ações e busca. |
+| **5. Autenticação** | 06/03 | Login com JWT e controle de permissões. |
 
-/login:
-  Método: POST
-  Descrição: Recebe o login e senha do usuário, verifica se estão corretos no banco de dados. Em caso positivo, gera um token jwt.
-  Autenticado: Não
+## 🚀 Extras e Deploy
+- [ ] Documentação com **Swagger**
+- [ ] Deploy na **AWS**
+- [ ] Desenvolvimento do **Frontend**
 
-
-/usuarios
-  Método: POST
-  Descrição: Cria um novo usuário
-  Autenticado: Sim
-
-  Método: GET
-  Descrição: Retorna todos os usuários do banco, sem a informação da senha, paginado
-  Autenticado: Sim
- 
-
-/usuarios/{id}
-  Método: GET
-  Descrição: Retorna os dados de um usuário específico
-  Autenticado: Sim
-
-  Método: DELETE
-  Descrição: Exclui um usuário específico
-  Autenticado: Sim
-
-  Método: PUT
-  Descrição: Atualiza os dados de um usuário específico
-  Autenticado: Sim
-
-
-/servicos
-  Método: POST
-  Descrição: Cria um novo serviço
-  Autenticado: Sim
-
-  Método: GET
-  Descrição: Retorna todos os serviços do banco, paginado
-  Autenticado: Sim
-
-
-/servicos/{id}
-  Método: GET
-  Descrição: Retorna os dados de um serviço específico
-  Autenticado: Sim
-
-  Método: DELETE
-  Descrição: Exclui um serviço específico
-  Autenticado: Sim
-
-  Método: PUT
-  Descrição: Atualiza os dados de um serviço específico
-  Autenticado: Sim
-
-
-/logs/{id}
-  Método: GET
-  Descrição: Retorna os dados de um log específico
-  Autenticado: Sim - Apenas usuários do tipo ADMIN
-
- 
-
-/logs?tipo={tipo}&id-recurso={idrecurso}
-
-  Método: GET
-  Descrição: Retorna os dados de um log específico
-  Autenticado: Sim - Apenas usuários do tipo ADMIN
-  Restrições: Obrigatório informar a data para o filtro. Os query parameters tipo e idrecurso não opcionais. Paginado
-
-
-
-1. Estudo e criação do banco de dados. 30/01.
-    1.1. Criar tabelas
-    1.2. Inserir usuário ADMIN padrão.
-
- 
-2. Cadastro de usuários. 06/02.
-    2.1. Inserção.
-    2.2. Deleção.
-    2.3. Atualização.
-    2.4. Busca.
- 
-
-3. Cadastro de serviços. 13/02.
-    3.1. Inserção.
-    3.2. Deleção.
-    3.3. Atualização.
-    3.4. Busca.
-
-
-4. Logs. 20/02.
-    4.1. Inserção de logs na execução de alguma ação.
-    4.2. Busca de logs.
-
-
-5. Login. 06/03.
-    5.1. Autenticação.
-    5.2. Autorização.
- 
-
-Opcionais: 
-6. Documentação da api com swagger.
-
-7. Subir api na aws.
-
-8. Criar frontend.
+## 🛠️ Tecnologias
+- **Linguagem:** Go 1.x
+- **Framework:** Fiber
+- **Banco de Dados:** MySQL
+- **Autenticação:** JWT (JSON Web Token)
