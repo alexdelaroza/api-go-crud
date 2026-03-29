@@ -21,7 +21,7 @@ func Setup(app *fiber.App) {
 	app.Post("/servicos", controllers.InserirServicos)
 	app.Put("/servicos/:id", controllers.AtualizarServicos)
 	app.Delete("/servicos/:id", controllers.DeletarServicos)
-	app.Get("/servicos", controllers.ConsultarServicos)
+	app.Get("/servicos", controllers.ListarServicos)
 	app.Get("/servicos/:id", controllers.ConsultarCodigoServicos)
 
 	// Log

@@ -203,7 +203,7 @@ func DeletarServicos(c *fiber.Ctx) error {
 	}
 }
 
-func ConsultarServicos(c *fiber.Ctx) error {
+func ListarServicos(c *fiber.Ctx) error {
 	lista, err, msg := database.ServicosConsultar()
 	if err != nil {
 		c.Status(fiber.StatusInternalServerError)
