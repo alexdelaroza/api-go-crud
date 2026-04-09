@@ -12,10 +12,11 @@ func Setup(app *fiber.App) {
 	app.Put("/usuarios/:id", controllers.AtualizarUsuarios)
 	app.Delete("/usuarios/:id", controllers.DeletarUsuarios)
 	app.Get("/usuarios", controllers.ListarUsuarios)
-	app.Get("/usuarios/:id", controllers.ConsultarCodigoUsuarios)
+	app.Get("/usuarios/:id", controllers.AuthorizationCookie, controllers.ConsultarCodigoUsuarios)
 
 	// Login
-	app.Post("/login", controllers.EfetuarLoginUsuarios)
+	app.Post("/login", controllers.Login)
+	app.Post("/logout", controllers.Logout)
 
 	// Servicos
 	app.Post("/servicos", controllers.InserirServicos)

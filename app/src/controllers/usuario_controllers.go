@@ -1,10 +1,10 @@
 package controllers
 
 import (
-	"api-go-crud/src/authentication"
 	"api-go-crud/src/database"
 	"api-go-crud/src/models"
 	"api-go-crud/src/validation"
+	"fmt"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
@@ -268,6 +268,9 @@ func ListarUsuarios(c *fiber.Ctx) error {
 func ConsultarCodigoUsuarios(c *fiber.Ctx) error {
 	var id string
 	id = c.Params("id")
+	userID := c.Locals("user_id")
+
+	fmt.Println("ConsultarCodigoUsuarios = :", userID)
 
 	// Valida Dados de Entrada
 	valido, msg_ret := validation.ValidarId(id)
@@ -296,57 +299,4 @@ func ConsultarCodigoUsuarios(c *fiber.Ctx) error {
 			"user":    usuario, // Adiciona o objeto inteiro aqui
 		})
 	}
-}
-
-func EfetuarLoginUsuarios(c *fiber.Ctx) error {
-	var login_usuario models.Usuario_login
-
-	err := c.BodyParser(&login_usuario)
-	if err != nil {
-		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{
-			"error": "JSON inválido",
-		})
-	}
-
-	// Valida Dados de Entrada
-	valido, msg_ret := validation.ValidaLoginUsuarios(login_usuario)
-	if !valido {
-		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{"message": msg_ret})
-	}
-
-	// Valida Usuario e Senha no banco de dados
-	achou, msg, usuarioID, err := database.Usuario_Efetuar_Login(login_usuario)
-	if err != nil {
-		c.Status(fiber.StatusInternalServerError)
-		return c.JSON(fiber.Map{
-			"error": err.Error(),
-		})
-	}
-
-	if !achou {
-		// Login não é valido...
-		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{
-			"message": msg,
-		})
-	}
-
-	// Login é valido...
-	Token_retorno, err := authentication.CriarToken(usuarioID)
-	if err != nil {
-		c.Status(fiber.StatusInternalServerError)
-		return c.JSON(fiber.Map{
-			"message": Token_retorno,
-			"error":   err.Error(),
-		})
-	}
-
-	c.Status(fiber.StatusOK)
-	return c.JSON(fiber.Map{
-		"message": msg,
-		"token":   Token_retorno, // Adiciona o objeto inteiro aqui
-	})
-
 }
