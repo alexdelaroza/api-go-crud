@@ -7,16 +7,19 @@ import (
 )
 
 func Setup(app *fiber.App) {
+	// Login
+	app.Post("/login", controllers.Login)
+	app.Post("/logout", controllers.Logout)
+
+	// Ativa a autenticacao para as rotas abaixo
+	app.Use(controllers.AuthorizationCookie)
+
 	// Usuarios
 	app.Post("/usuarios", controllers.InserirUsuarios)
 	app.Put("/usuarios/:id", controllers.AtualizarUsuarios)
 	app.Delete("/usuarios/:id", controllers.DeletarUsuarios)
 	app.Get("/usuarios", controllers.ListarUsuarios)
-	app.Get("/usuarios/:id", controllers.AuthorizationCookie, controllers.ConsultarCodigoUsuarios)
-
-	// Login
-	app.Post("/login", controllers.Login)
-	app.Post("/logout", controllers.Logout)
+	app.Get("/usuarios/:id", controllers.ConsultarCodigoUsuarios)
 
 	// Servicos
 	app.Post("/servicos", controllers.InserirServicos)

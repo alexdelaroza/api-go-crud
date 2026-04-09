@@ -13,12 +13,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-type CustomClaims struct {
-	UserID string `json:"user_id"`
-	jwt.RegisteredClaims
-}
-
-func AuthRequired(c *fiber.Ctx) error {
+func AuthorizationHeader(c *fiber.Ctx) error {
 	//config.JwtSecret = > var JwtSecret = []byte("sua_chave_secreta_super_segura")
 
 	// 1. Obtém o cabeçalho Authorization
@@ -60,6 +55,11 @@ func AuthRequired(c *fiber.Ctx) error {
 }
 
 func AuthorizationCookie(c *fiber.Ctx) error {
+	type CustomClaims struct {
+		UserID string `json:"user_id"`
+		jwt.RegisteredClaims
+	}
+
 	//config.JwtSecret = > var JwtSecret = []byte("sua_chave_secreta_super_segura")
 
 	// 1. Obtém o cookie
