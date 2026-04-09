@@ -19,12 +19,11 @@ func main() {
 	// cria a instancia do WEB server
 	app := fiber.New()
 
-	// CORS é uma medida de segurança que ajuda a proteger os usuários de sites da web contra vulnerabilidades e ataques maliciosos.
+	// CORS é uma medida de segurança para proteger os usuários contra vulnerabilidades e ataques maliciosos.
 	// AllowCredentials definida como true, permite que o servidor inclua cookies e cabeçalhos de autenticação na solicitação.
-	//Se não tiver como true, o frontend não vai conseguir pegar o cookie.
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     fmt.Sprintf("http://localhost:%d", config.Porta), // Ou a porta do seu front
-		AllowCredentials: true,
+		AllowOrigins:     fmt.Sprintf("http://localhost:%d", config.Porta),
+		AllowCredentials: true, 
 	}))
 
 	// setup app routes
