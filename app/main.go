@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 
-	"api-go-crud/src/config"
+	config "api-go-crud/src/configs"
 	"api-go-crud/src/router"
 )
 

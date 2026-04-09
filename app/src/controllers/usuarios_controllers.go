@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"api-go-crud/src/database"
+	database "api-go-crud/src/databases"
 	"api-go-crud/src/models"
 	"api-go-crud/src/validation"
 	"fmt"

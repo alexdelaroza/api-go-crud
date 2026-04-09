@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"api-go-crud/src/database"
+	"api-go-crud/src/databases"
 	"api-go-crud/src/validation"
 
 	"github.com/gofiber/fiber/v2"
