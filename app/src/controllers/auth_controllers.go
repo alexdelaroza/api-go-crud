@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"api-go-crud/src/authentication"
-	config "api-go-crud/src/configs"
-	database "api-go-crud/src/databases"
+	"api-go-crud/src/configs"
+	"api-go-crud/src/databases"
 	"api-go-crud/src/models"
 	"api-go-crud/src/validation"
 	"fmt"
