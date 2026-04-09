@@ -16,14 +16,14 @@ func CriarToken(usuarioID string) (string, error) {
 		"exp":     time.Now().Add(time.Minute * 5).Unix(),
 	}
 
-	//var JwtSecret = []byte("minha_chave_secreta_123")
+	//config.JwtSecret => JwtSecret := []byte("minha_chave_secreta_123")
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	t, err := token.SignedString(config.JwtSecret)
+	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	token, err := jwtToken.SignedString(config.JwtSecret)
 	if err != nil {
 		return "Erro ao gerar token", err
 	}
-	return t, nil
+	return token, nil
 }
 
 func AuthRequired(c *fiber.Ctx) error {

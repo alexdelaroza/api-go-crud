@@ -334,11 +334,11 @@ func EfetuarLoginUsuarios(c *fiber.Ctx) error {
 	}
 
 	// Login é valido...
-	retorno, err := authentication.CriarToken(usuarioID)
+	Token_retorno, err := authentication.CriarToken(usuarioID)
 	if err != nil {
 		c.Status(fiber.StatusInternalServerError)
 		return c.JSON(fiber.Map{
-			"message": retorno,
+			"message": Token_retorno,
 			"error":   err.Error(),
 		})
 	}
@@ -346,7 +346,7 @@ func EfetuarLoginUsuarios(c *fiber.Ctx) error {
 	c.Status(fiber.StatusOK)
 	return c.JSON(fiber.Map{
 		"message": msg,
-		"token":   retorno, // Adiciona o objeto inteiro aqui
+		"token":   Token_retorno, // Adiciona o objeto inteiro aqui
 	})
 
 }
