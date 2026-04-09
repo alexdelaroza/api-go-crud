@@ -23,11 +23,12 @@ func main() {
 	// AllowCredentials definida como true, permite que o servidor inclua cookies e cabeçalhos de autenticação na solicitação.
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     fmt.Sprintf("http://localhost:%d", config.Porta),
-		AllowCredentials: true, 
+		AllowCredentials: true,
 	}))
 
 	// setup app routes
 	router.Setup(app)
+
 	// iniciamos o seridor
 	fmt.Println("Escutando na Porta:", config.Porta)
 	app.Listen(fmt.Sprintf(":%d", config.Porta))
