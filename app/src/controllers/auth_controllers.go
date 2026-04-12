@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"api-go-crud/src/authentication"
-	"api-go-crud/src/configs"
-	"api-go-crud/src/databases"
+	config "api-go-crud/src/configs"
+	database "api-go-crud/src/databases"
 	"api-go-crud/src/models"
 	"api-go-crud/src/validation"
 	"fmt"
@@ -162,4 +162,35 @@ func Login(c *fiber.Ctx) error {
 		"token":   Token_retorno, // Adiciona o objeto inteiro aqui
 	})
 
+}
+
+func ObterUsuarioPeloToken(c *fiber.Ctx) error {
+	// 1. Pega o ID que o seu Middleware AuthorizationHeader salvou no Locals
+	// Fazemos a conversão para string (type assertion)
+	userID, ok := c.Locals("user_id").(string)
+	if !ok || userID == "" {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "ID do usuário não encontrado no token",
+		})
+	}
+
+	// 2. Chama diretamente sua função de banco que já existe
+	usuario, achou, err, msg := database.Usuario_Consultar_Codigo(userID)
+	
+	if err != nil {
+		c.Status(fiber.StatusInternalServerError)
+		return c.JSON(fiber.Map{"error": err.Error()})
+	}
+
+	if !achou {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"message": "Usuário do token não encontrado no banco",
+		})
+	}
+
+	// 3. Retorna o sucesso
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": msg,
+		"user":    usuario,
+	})
 }

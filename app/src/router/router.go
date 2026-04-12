@@ -13,6 +13,10 @@ func Setup(app *fiber.App) {
 
 	// Ativa a autenticacao para as rotas abaixo
 	//app.Use(controllers.AuthorizationCookie)
+	app.Use(controllers.AuthorizationHeader)
+
+	// Esta rota o React chamará para saber "quem sou eu" assim que abrir o site
+	app.Get("/user", controllers.ObterUsuarioPeloToken)
 
 	// Usuarios
 	app.Post("/usuarios", controllers.InserirUsuarios)
