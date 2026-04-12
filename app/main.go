@@ -22,8 +22,11 @@ func main() {
 	// CORS é uma medida de segurança para proteger os usuários contra vulnerabilidades e ataques maliciosos.
 	// AllowCredentials definida como true, permite que o servidor inclua cookies e cabeçalhos de autenticação na solicitação.
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     fmt.Sprintf("http://localhost:%d", config.Porta),
+		//AllowOrigins:     fmt.Sprintf("http://localhost:%d", config.Porta),
+		AllowOrigins:     "http://localhost:3001",
 		AllowCredentials: true,
+		AllowHeaders:     "Origin, Content-Type, Accept, Authorization", // Adicione Authorization aqui
+		AllowMethods:     "GET, POST, PUT, DELETE, OPTIONS",             // Adicione o GET aqui
 	}))
 
 	// setup app routes

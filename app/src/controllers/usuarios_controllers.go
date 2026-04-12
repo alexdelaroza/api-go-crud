@@ -108,19 +108,19 @@ func AtualizarUsuarios(c *fiber.Ctx) error {
 	var id string
 	id = c.Params("id")
 	// Valida Dados de Entrada
-	valido, msg_ret := validation.ValidarId(id)
+	valido, msg_ret_id := validation.ValidarId(id)
 	if !valido {
 		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{"message": msg_ret})
+		return c.JSON(fiber.Map{"message": msg_ret_id})
 	}
 
 	// Valida se o Email ja existe no Cadastro
-	achou_email, msg_ret_email, err := database.Usuario_Consultar_Email(altera_usuario.Email)
-	if err != nil {
+	achou_email, msg_ret_email, err_email := database.Usuario_Consultar_Email(altera_usuario.Email)
+	if err_email != nil {
 		c.Status(fiber.StatusInternalServerError)
 		return c.JSON(fiber.Map{
 			"message": msg_ret_email,
-			"error":   err.Error(),
+			"error":   err_email.Error(),
 		})
 	}
 	if achou_email {
@@ -131,12 +131,12 @@ func AtualizarUsuarios(c *fiber.Ctx) error {
 	}
 
 	// Valida se o Login ja existe no Cadastro
-	achou_login, msg_ret_login, err := database.Usuario_Consultar_Login(altera_usuario.Login)
-	if err != nil {
+	achou_login, msg_ret_login, err_ret_login := database.Usuario_Consultar_Login(altera_usuario.Login)
+	if err_ret_login != nil {
 		c.Status(fiber.StatusInternalServerError)
 		return c.JSON(fiber.Map{
 			"message": msg_ret_login,
-			"error":   err.Error(),
+			"error":   err_ret_login.Error(),
 		})
 	}
 	if achou_login {
@@ -147,20 +147,19 @@ func AtualizarUsuarios(c *fiber.Ctx) error {
 	}
 
 	// Valida se o Usuario existe no Cadastro
-	_, achou, err, msg := database.Usuario_Consultar_Codigo(id)
-	if err != nil {
+	_, achou, err_ret_id, msg_ret_id := database.Usuario_Consultar_Codigo(id)
+	if err_ret_id != nil {
 		c.Status(fiber.StatusInternalServerError)
-		return c.JSON(fiber.Map{"error": err.Error()})
+		return c.JSON(fiber.Map{"error": err_ret_id.Error()})
 	}
 
 	if !achou {
 		// Usuário não existe. Não sera alterado...
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{
-			"message": msg,
+			"message": msg_ret_id,
 			"user":    id,
 		})
-
 	} else {
 		// Usuário existe. Seguindo para alteração...
 		msg, err := database.Usuario_Atualizar(id, altera_usuario)
@@ -175,12 +174,12 @@ func AtualizarUsuarios(c *fiber.Ctx) error {
 		novo_log.Criado_por = "1"
 		novo_log.Descricao = "alteracao de usuario"
 
-		msg, err = database.Log_Inserir(novo_log)
-		if err != nil {
+		msg_log, err_log := database.Log_Inserir(novo_log)
+		if err_log != nil {
 			c.Status(fiber.StatusInternalServerError)
 			return c.JSON(fiber.Map{
-				"message": msg,
-				"error":   err.Error(),
+				"message": msg_log,
+				"error":   err_log.Error(),
 			})
 		}
 		// log -> INSERIR

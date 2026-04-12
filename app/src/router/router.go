@@ -12,7 +12,7 @@ func Setup(app *fiber.App) {
 	app.Post("/logout", controllers.Logout)
 
 	// Ativa a autenticacao para as rotas abaixo
-	app.Use(controllers.AuthorizationCookie)
+	//app.Use(controllers.AuthorizationCookie)
 
 	// Usuarios
 	app.Post("/usuarios", controllers.InserirUsuarios)
