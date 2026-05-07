@@ -1,7 +1,7 @@
 package database
 
 import (
-	"api-go-crud/src/configs"
+	"api-go-crud/src/config"
 	"database/sql"
 
 	_ "github.com/go-sql-driver/mysql"

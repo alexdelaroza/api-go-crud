@@ -1,7 +1,7 @@
 package authentication
 
 import (
-	"api-go-crud/src/configs"
+	"api-go-crud/src/config"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"

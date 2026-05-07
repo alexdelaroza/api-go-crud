@@ -2,11 +2,12 @@ package controllers
 
 import (
 	"api-go-crud/src/authentication"
-	config "api-go-crud/src/configs"
-	database "api-go-crud/src/databases"
+	"api-go-crud/src/config"
+	"api-go-crud/src/database"
 	"api-go-crud/src/models"
 	"api-go-crud/src/validation"
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
@@ -176,7 +177,7 @@ func ObterUsuarioPeloToken(c *fiber.Ctx) error {
 
 	// 2. Chama diretamente sua função de banco que já existe
 	usuario, achou, err, msg := database.Usuario_Consultar_Codigo(userID)
-	
+
 	if err != nil {
 		c.Status(fiber.StatusInternalServerError)
 		return c.JSON(fiber.Map{"error": err.Error()})
@@ -193,4 +194,48 @@ func ObterUsuarioPeloToken(c *fiber.Ctx) error {
 		"message": msg,
 		"user":    usuario,
 	})
+}
+
+func CheckAuth(tiposPermitidos ...string) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		// Pega o ID que o AuthorizationHeader salvou no Locals
+		userID, ok := c.Locals("user_id").(string)
+		if !ok || userID == "" {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "ID do usuário não encontrado no token",
+			})
+		}
+
+		// Chama diretamente sua função de banco que já existe
+		usuario, achou, err, msg := database.Usuario_Consultar_Codigo(userID)
+
+		if err != nil {
+			c.Status(fiber.StatusInternalServerError)
+			return c.JSON(fiber.Map{
+				"message": msg,
+				"error":   err.Error(),
+			})
+		}
+
+		if !achou {
+			c.Status(fiber.StatusNotFound)
+			return c.JSON(fiber.Map{
+				"message": "Usuário do token não encontrado no banco",
+			})
+		}
+
+		// Valida se o Tipo do usuário está entre os permitidos
+		// o slices.Contains faz o loop de forma otimizada
+		permitido := slices.Contains(tiposPermitidos, usuario.Tipo)
+
+		if !permitido {
+			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+				"message": "Seu nível de acesso não permite esta ação",
+			})
+		}
+
+		// Retorna o sucesso, está autorizado.
+		// O Next() chama a próxima Função.
+		return c.Next()
+	}
 }

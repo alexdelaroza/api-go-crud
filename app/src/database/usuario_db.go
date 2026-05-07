@@ -166,7 +166,7 @@ func Usuario_Consultar_Codigo(codigo_usuario string) (models.Usuario_read, bool,
 	}
 	defer db.Close()
 
-	query := "select codigo, nome, login, email, data_criacao_atu from usuarios where codigo = ?"
+	query := "select codigo, nome, login, email, tipo, data_criacao_atu from usuarios where codigo = ?"
 
 	rows, err := db.Query(query, codigo_usuario)
 	if err != nil {
@@ -179,7 +179,7 @@ func Usuario_Consultar_Codigo(codigo_usuario string) (models.Usuario_read, bool,
 		return usuario, false, nil, msg
 	}
 
-	err = rows.Scan(&usuario.Codigo, &usuario.Nome, &usuario.Login, &usuario.Email, &usuario.Data_criacao_atu)
+	err = rows.Scan(&usuario.Codigo, &usuario.Nome, &usuario.Login, &usuario.Email, &usuario.Tipo, &usuario.Data_criacao_atu)
 	if err != nil {
 		// Erro real
 		return usuario, false, err, err.Error()
