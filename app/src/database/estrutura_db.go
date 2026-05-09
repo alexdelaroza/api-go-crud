@@ -2,7 +2,6 @@ package database
 
 import (
 	"database/sql"
-	"log"
 )
 
 func exec(db *sql.DB, sql string) sql.Result {
@@ -14,23 +13,18 @@ func exec(db *sql.DB, sql string) sql.Result {
 }
 
 func Create_table() {
-	db, err := ConectarDb()
-	if err != nil {
-		log.Fatal("Erro ao conectar:", err)
-	}
-	defer db.Close()
 
 	//exec(db, "create database if not exists cursogo")
 	//exec(db, "use cursogo")
 
-	exec(db, "create database if not exists crud_db")
-	exec(db, "use crud_db")
+	exec(DB, "create database if not exists crud_db")
+	exec(DB, "use crud_db")
 
-	exec(db, "drop table if exists log")
-	exec(db, "drop table if exists servico")
-	exec(db, "drop table if exists usuarios")
+	exec(DB, "drop table if exists log")
+	exec(DB, "drop table if exists servico")
+	exec(DB, "drop table if exists usuarios")
 
-	exec(db, `create table usuarios (
+	exec(DB, `create table usuarios (
              codigo INT NOT NULL AUTO_INCREMENT,
              nome VARCHAR(250) NOT NULL,
              login VARCHAR(250) NOT NULL,
@@ -41,7 +35,7 @@ func Create_table() {
              PRIMARY KEY (codigo)
         )`)
 
-	exec(db, `create table servico (
+	exec(DB, `create table servico (
              codigo INT NOT NULL AUTO_INCREMENT,
              descricao VARCHAR(250) NOT NULL,
              valor DECIMAL(10, 2) NOT NULL,
@@ -50,7 +44,7 @@ func Create_table() {
              PRIMARY KEY (codigo)
         )`)
 
-	exec(db, `create table log (
+	exec(DB, `create table log (
              codigo INT NOT NULL AUTO_INCREMENT,
              descricao TEXT NOT NULL,
              cod_recurso VARCHAR(36) NOT NULL,

@@ -10,19 +10,12 @@ import (
 func ServicosInserir(novo_servico models.Servico_input) (int, string, error) {
 	var msg string
 
-	db, err := ConectarDb()
-	if err != nil {
-		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
-		return 0, msg, err
-	}
-	defer db.Close()
-
 	query := `INSERT INTO servico (
                           descricao
 						, valor
                  ) VALUES (?, ?)`
 
-	stmt, err := db.Prepare(query)
+	stmt, err := DB.Prepare(query)
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao preparar a query: %s", err.Error())
 		return 0, msg, err
@@ -51,21 +44,22 @@ func ServicosInserir(novo_servico models.Servico_input) (int, string, error) {
 func ServicosAtualizar(codigo string, altera_servico models.Servico_input) (string, error) {
 	var msg string
 
-	db, err := ConectarDb()
-	if err != nil {
-		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
-		return msg, err
-	}
-	defer db.Close()
-
 	query := `update  servico 
 	            set   descricao = ? 
 				  ,   valor     = ?
                 where codigo    = ?`
 
-	stmt, _ := db.Prepare(query)
-
+	stmt, err := DB.Prepare(query)
+	if err != nil {
+		msg = fmt.Sprintf("Erro ao preparar a query: %s", err.Error())
+		return msg, err
+	}
+	
 	res, err := stmt.Exec(altera_servico.Descricao, altera_servico.Valor, codigo)
+	if err != nil {
+		msg = fmt.Sprintf("Erro ao executar a insercao: %s", err.Error())
+		return msg, err
+	}
 
 	id, _ := res.LastInsertId()
 	fmt.Println(id)
@@ -80,16 +74,9 @@ func ServicosAtualizar(codigo string, altera_servico models.Servico_input) (stri
 func ServicosDeletar(codigo_servico string) (string, error) {
 	var msg string
 
-	db, err := ConectarDb()
-	if err != nil {
-		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
-		return msg, err
-	}
-	defer db.Close()
-
 	query := `delete from servico where codigo = ?`
 
-	stmt, _ := db.Prepare(query)
+	stmt, _ := DB.Prepare(query)
 
 	res, _ := stmt.Exec(codigo_servico)
 
@@ -106,16 +93,9 @@ func ServicosDeletar(codigo_servico string) (string, error) {
 func ServicosConsultar() ([]models.Servico_output, error, string) {
 	var msg string
 
-	db, err := ConectarDb()
-	if err != nil {
-		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
-		return nil, err, msg
-	}
-	defer db.Close()
-
 	query := `SELECT codigo, descricao, valor, data_criacao_atu FROM servico`
 
-	rows, err := db.Query(query)
+	rows, err := DB.Query(query)
 	if err != nil {
 		return nil, err, err.Error()
 	}
@@ -144,16 +124,10 @@ func ServicosConsultarCodigo(codigo_servico string) (models.Servico_output, bool
 	var msg string
 
 	var servico models.Servico_output
-	db, err := ConectarDb()
-	if err != nil {
-		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
-		return servico, false, err, msg
-	}
-	defer db.Close()
 
 	query := "SELECT codigo, descricao, valor, data_criacao_atu FROM servico WHERE codigo = ?"
 
-	rows, err := db.Query(query, codigo_servico)
+	rows, err := DB.Query(query, codigo_servico)
 	if err != nil {
 		return servico, false, err, err.Error()
 	}
@@ -178,16 +152,9 @@ func ServicosConsultarCodigo(codigo_servico string) (models.Servico_output, bool
 func ServicosConsultarDescricao(descricao_servico string) (bool, string, error) {
 	var msg, codigo string
 
-	db, err := ConectarDb()
-	if err != nil {
-		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
-		return false, msg, err
-	}
-	defer db.Close()
-
 	query := "SELECT codigo FROM servico WHERE descricao = ?"
 
-	rows, err := db.Query(query, descricao_servico)
+	rows, err := DB.Query(query, descricao_servico)
 	if err != nil {
 		return false, err.Error(), err
 	}

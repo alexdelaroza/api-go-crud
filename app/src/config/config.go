@@ -33,12 +33,33 @@ func CarregarConfig() {
 		fmt.Println("ERRO - A Porta foi alterada para:", Porta)
 	}
 
-	StringConexaoBanco = fmt.Sprintf("%s:%s@/%s?charset=utf8&parseTime=True&loc=Local",
-		os.Getenv("DB_USUARIO"),
-		os.Getenv("DB_SENHA"),
-		os.Getenv("DB_BANCO"),
-	)
+	JwtSecret = []byte(os.Getenv("JWTSECRET_KEY"))
+
+	StringConexaoBanco = MontaStringConexaoBD()
 	fmt.Printf("Banco de Dados\n  Usuário: %s\n  Banco..: %s\n", os.Getenv("DB_USUARIO"), os.Getenv("DB_BANCO"))
 
-	JwtSecret = []byte(os.Getenv("JWTSECRET_KEY"))
+}
+
+// Monta a string de conexão formatada para o MySQL
+func MontaStringConexaoBD() string {
+	// Buscando as variáveis do .env
+	usuario := os.Getenv("DB_USUARIO")
+	senha := os.Getenv("DB_SENHA")
+	banco := os.Getenv("DB_BANCO")
+
+	// Para rodar Docker => o Host: "db"        => "DB_HOST_DOCKER"
+	// Para rodar local  => o Host: "127.0.0.1" => "DB_HOST_LOCAL"
+	host := os.Getenv("DB_HOST_LOCAL")
+
+	// A porta interna do container MySQL é "3306"
+	porta := os.Getenv("DB_PORTA")
+
+	// Formato: usuario:senha@tcp(host:porta)/nome_do_banco?opcoes
+	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		usuario,
+		senha,
+		host,
+		porta,
+		banco,
+	)
 }

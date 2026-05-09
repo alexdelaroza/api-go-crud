@@ -7,16 +7,21 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+// Variável global para manter a conexão ativa
+var DB *sql.DB
+
 // Abre aconexão com o banco de dados
-func ConectarDb() (*sql.DB, error) {
-	db, erro := sql.Open("mysql", config.StringConexaoBanco)
+func ConectarDb() error {
+	var erro error
+
+	DB, erro = sql.Open("mysql", config.StringConexaoBanco)
 	if erro != nil {
-		return nil, erro
+		return erro
 	}
 
-	if erro = db.Ping(); erro != nil {
-		db.Close()
-		return nil, erro
+	if erro = DB.Ping(); erro != nil {
+		DB.Close()
+		return erro
 	}
-	return db, nil
+	return nil
 }

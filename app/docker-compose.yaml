@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # Serviço da sua API Go com Fiber
+  api:
+    build: .
+    image: fiber-app:latest
+    container_name: fiber_api_container
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    stdin_open: true
+    tty: true
+    depends_on:
+      db:
+        condition: service_healthy # Só sobe a API quando o MySQL estiver pronto
+    networks:
+      - app-network
+
+  # Serviço do Banco de Dados MySQL
+  db:
+    image: mysql:8.0
+    container_name: mysql_container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DB_SENHA}"
+      MYSQL_DATABASE: "${DB_BANCO}"
+      MYSQL_USER: "${DB_USUARIO}"
+      MYSQL_PASSWORD: "${DB_SENHA}"
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${DB_SENHA}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql_data:

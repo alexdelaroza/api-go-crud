@@ -1,6 +1,6 @@
 module api-go-crud
 
-go 1.25.7
+go 1.24.0
 
 require (
 	github.com/go-sql-driver/mysql v1.9.3
@@ -19,6 +19,6 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-runewidth v0.0.21 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	github.com/valyala/fasthttp v1.69.0 // indirect
-	golang.org/x/sys v0.42.0 // indirect
+	github.com/valyala/fasthttp v1.59.0 // indirect
+	golang.org/x/sys v0.30.0 // indirect
 )

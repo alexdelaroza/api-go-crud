@@ -2,21 +2,32 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 
 	"api-go-crud/src/config"
+	"api-go-crud/src/database"
 	"api-go-crud/src/router"
 )
 
 func main() {
 	//database.Create_table()
 
-	// Carregar as Variavei de Ambiente
+	// 1. Carregar as Variavei de Ambiente
 	config.CarregarConfig()
 
-	// cria a instancia do WEB server
+	// 2. Conecta ao banco de dados
+	err := database.ConectarDb()
+	if err != nil {
+		log.Fatal("Erro fatal ao conectar no banco:", err)
+	}
+	defer database.DB.Close()
+
+	fmt.Println("Conexão com o banco estabelecida com sucesso!")
+
+	// 3. cria a instancia do WEB server
 	app := fiber.New()
 
 	// CORS é uma medida de segurança para proteger os usuários contra vulnerabilidades e ataques maliciosos.
@@ -32,8 +43,8 @@ func main() {
 	// setup app routes
 	router.Setup(app)
 
-	// iniciamos o seridor
-	fmt.Println("Escutando na Porta:", config.Porta)
+	// iniciamos o servidor
+	fmt.Println("API escutando na Porta:", config.Porta)
 	app.Listen(fmt.Sprintf(":%d", config.Porta))
 
 }
