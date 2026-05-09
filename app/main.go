@@ -13,7 +13,6 @@ import (
 )
 
 func main() {
-	//database.Create_table()
 
 	// 1. Carregar as Variavei de Ambiente
 	config.CarregarConfig()
@@ -27,6 +26,9 @@ func main() {
 
 	fmt.Println("Conexão com o banco estabelecida com sucesso!")
 
+	//Caso precise criar a estrutura do Banco de Dados
+	//database.Create_table()
+	
 	// 3. cria a instancia do WEB server
 	app := fiber.New()
 
