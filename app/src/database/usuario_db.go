@@ -108,7 +108,7 @@ func Usuario_Consultar() ([]models.Usuario_read, error, string) {
 
 	var usuarios []models.Usuario_read
 	query := `
-		SELECT codigo, nome, login, email, data_criacao_atu 
+		SELECT codigo, nome, login, email, tipo, data_criacao_atu 
 		FROM usuarios
 	`
 
@@ -120,7 +120,7 @@ func Usuario_Consultar() ([]models.Usuario_read, error, string) {
 
 	for rows.Next() {
 		var u models.Usuario_read
-		err := rows.Scan(&u.Codigo, &u.Nome, &u.Login, &u.Email, &u.Data_criacao_atu)
+		err := rows.Scan(&u.Codigo, &u.Nome, &u.Login, &u.Email, &u.Tipo, &u.Data_criacao_atu)
 		if err != nil {
 			return nil, err, err.Error()
 		}
