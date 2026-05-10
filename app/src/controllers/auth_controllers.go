@@ -196,7 +196,7 @@ func ObterUsuarioPeloToken(c *fiber.Ctx) error {
 	})
 }
 
-func CheckAuth(tiposPermitidos ...string) fiber.Handler {
+func CheckTipoUsuario(tiposPermitidos ...string) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		// Pega o ID que o AuthorizationHeader salvou no Locals
 		userID, ok := c.Locals("user_id").(string)

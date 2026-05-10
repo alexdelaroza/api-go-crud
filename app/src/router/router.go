@@ -18,19 +18,19 @@ func Setup(app *fiber.App) {
 	app.Get("/user", controllers.ObterUsuarioPeloToken)
 
 	// --- USUÁRIOS ---
-	app.Get("/usuarios", controllers.CheckAuth("admin", "vendedor"), controllers.ListarUsuarios)
-	app.Get("/usuarios/:id", controllers.CheckAuth("admin", "vendedor"), controllers.ConsultarCodigoUsuarios)
-	app.Post("/usuarios", controllers.CheckAuth("admin"), controllers.InserirUsuarios)
-	app.Put("/usuarios/:id", controllers.CheckAuth("admin"), controllers.AtualizarUsuarios)
-	app.Delete("/usuarios/:id", controllers.CheckAuth("admin"), controllers.DeletarUsuarios)
+	app.Get("/usuarios", controllers.CheckTipoUsuario("admin", "vendedor"), controllers.ListarUsuarios)
+	app.Get("/usuarios/:id", controllers.CheckTipoUsuario("admin", "vendedor"), controllers.ConsultarCodigoUsuarios)
+	app.Post("/usuarios", controllers.CheckTipoUsuario("admin"), controllers.InserirUsuarios)
+	app.Put("/usuarios/:id", controllers.CheckTipoUsuario("admin"), controllers.AtualizarUsuarios)
+	app.Delete("/usuarios/:id", controllers.CheckTipoUsuario("admin"), controllers.DeletarUsuarios)
 
 	// --- SERVIÇOS ---
-	app.Get("/servicos", controllers.CheckAuth("admin", "vendedor"), controllers.ListarServicos)
-	app.Get("/servicos/:id", controllers.CheckAuth("admin", "vendedor"), controllers.ConsultarCodigoServicos)
-	app.Post("/servicos", controllers.CheckAuth("admin", "vendedor"), controllers.InserirServicos)
-	app.Put("/servicos/:id", controllers.CheckAuth("admin", "vendedor"), controllers.AtualizarServicos)
-	app.Delete("/servicos/:id", controllers.CheckAuth("admin", "vendedor"), controllers.DeletarServicos)
+	app.Get("/servicos", controllers.CheckTipoUsuario("admin", "vendedor"), controllers.ListarServicos)
+	app.Get("/servicos/:id", controllers.CheckTipoUsuario("admin", "vendedor"), controllers.ConsultarCodigoServicos)
+	app.Post("/servicos", controllers.CheckTipoUsuario("admin", "vendedor"), controllers.InserirServicos)
+	app.Put("/servicos/:id", controllers.CheckTipoUsuario("admin", "vendedor"), controllers.AtualizarServicos)
+	app.Delete("/servicos/:id", controllers.CheckTipoUsuario("admin", "vendedor"), controllers.DeletarServicos)
 
 	// --- LOGS ---
-	app.Get("/logs", controllers.CheckAuth("admin"), controllers.Consulta_Log)
+	app.Get("/logs", controllers.CheckTipoUsuario("admin"), controllers.Consulta_Log)
 }
