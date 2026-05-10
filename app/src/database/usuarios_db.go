@@ -10,13 +10,6 @@ import (
 func Usuario_Inserir(novo_usuario models.Usuario_input) (int, string, error) {
 	var msg string
 
-	db, err := Conectar()
-	if err != nil {
-		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
-		return 0, msg, err
-	}
-	defer db.Close()
-
 	query := `
 		INSERT INTO usuarios ( 
 	                nome, 
@@ -27,7 +20,7 @@ func Usuario_Inserir(novo_usuario models.Usuario_input) (int, string, error) {
            ) VALUES (?, ?, ?, ?, ?)
 	`
 
-	stmt, err := db.Prepare(query)
+	stmt, err := DB.Prepare(query)
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao preparar a query: %s", err.Error())
 		return 0, msg, err
@@ -56,13 +49,6 @@ func Usuario_Inserir(novo_usuario models.Usuario_input) (int, string, error) {
 func Usuario_Atualizar(codigo string, altera_usuario models.Usuario_input) (string, error) {
 	var msg string
 
-	db, err := Conectar()
-	if err != nil {
-		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
-		return msg, err
-	}
-	defer db.Close()
-
 	query := `
 		update usuarios 
 	       set   nome   = ? 
@@ -73,9 +59,17 @@ func Usuario_Atualizar(codigo string, altera_usuario models.Usuario_input) (stri
          where   codigo = ?
 	`
 
-	stmt, _ := db.Prepare(query)
+	stmt, err := DB.Prepare(query)
+	if err != nil {
+		msg = fmt.Sprintf("Erro ao preparar a query: %s", err.Error())
+		return msg, err
+	}
 
 	res, err := stmt.Exec(altera_usuario.Nome, altera_usuario.Login, altera_usuario.Senha, altera_usuario.Email, altera_usuario.Tipo, codigo)
+	if err != nil {
+		msg = fmt.Sprintf("Erro ao executar a insercao: %s", err.Error())
+		return msg, err
+	}
 
 	id, _ := res.LastInsertId()
 	fmt.Println(id)
@@ -90,19 +84,12 @@ func Usuario_Atualizar(codigo string, altera_usuario models.Usuario_input) (stri
 func Usuario_Deletar(codigo_usuario string) (string, error) {
 	var msg string
 
-	db, err := Conectar()
-	if err != nil {
-		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
-		return msg, err
-	}
-	defer db.Close()
-
 	query := `
 		delete from usuarios 
 		 where codigo = ?
 	`
 
-	stmt, _ := db.Prepare(query)
+	stmt, _ := DB.Prepare(query)
 
 	res, _ := stmt.Exec(codigo_usuario)
 
@@ -119,20 +106,13 @@ func Usuario_Deletar(codigo_usuario string) (string, error) {
 func Usuario_Consultar() ([]models.Usuario_read, error, string) {
 	var msg string
 
-	db, err := Conectar()
-	if err != nil {
-		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
-		return nil, err, msg
-	}
-	defer db.Close()
-
 	var usuarios []models.Usuario_read
 	query := `
-		SELECT codigo, nome, login, email, data_criacao_atu 
+		SELECT codigo, nome, login, email, tipo, data_criacao_atu 
 		FROM usuarios
 	`
 
-	rows, err := db.Query(query)
+	rows, err := DB.Query(query)
 	if err != nil {
 		return nil, err, err.Error()
 	}
@@ -140,7 +120,7 @@ func Usuario_Consultar() ([]models.Usuario_read, error, string) {
 
 	for rows.Next() {
 		var u models.Usuario_read
-		err := rows.Scan(&u.Codigo, &u.Nome, &u.Login, &u.Email, &u.Data_criacao_atu)
+		err := rows.Scan(&u.Codigo, &u.Nome, &u.Login, &u.Email, &u.Tipo, &u.Data_criacao_atu)
 		if err != nil {
 			return nil, err, err.Error()
 		}
@@ -159,16 +139,9 @@ func Usuario_Consultar_Codigo(codigo_usuario string) (models.Usuario_read, bool,
 	var msg string
 	var usuario models.Usuario_read
 
-	db, err := Conectar()
-	if err != nil {
-		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
-		return usuario, false, err, msg
-	}
-	defer db.Close()
+	query := "select codigo, nome, login, email, tipo, data_criacao_atu from usuarios where codigo = ?"
 
-	query := "select codigo, nome, login, email, data_criacao_atu from usuarios where codigo = ?"
-
-	rows, err := db.Query(query, codigo_usuario)
+	rows, err := DB.Query(query, codigo_usuario)
 	if err != nil {
 		return usuario, false, err, err.Error()
 	}
@@ -179,7 +152,7 @@ func Usuario_Consultar_Codigo(codigo_usuario string) (models.Usuario_read, bool,
 		return usuario, false, nil, msg
 	}
 
-	err = rows.Scan(&usuario.Codigo, &usuario.Nome, &usuario.Login, &usuario.Email, &usuario.Data_criacao_atu)
+	err = rows.Scan(&usuario.Codigo, &usuario.Nome, &usuario.Login, &usuario.Email, &usuario.Tipo, &usuario.Data_criacao_atu)
 	if err != nil {
 		// Erro real
 		return usuario, false, err, err.Error()
@@ -194,20 +167,13 @@ func Usuario_Consultar_Email(email_usuario string) (bool, string, error) {
 	var msg string
 	var total int
 
-	db, err := Conectar()
-	if err != nil {
-		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
-		return false, msg, err
-	}
-	defer db.Close()
-
 	query := `
 	    SELECT COUNT(email)
 		  FROM usuarios
 		 WHERE email = ? 
 	`
 
-	rows, err := db.Query(query, email_usuario)
+	rows, err := DB.Query(query, email_usuario)
 	if err != nil {
 		return false, err.Error(), err
 	}
@@ -235,20 +201,13 @@ func Usuario_Consultar_Login(login_usuario string) (bool, string, error) {
 	var msg string
 	var total int
 
-	db, err := Conectar()
-	if err != nil {
-		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
-		return false, msg, err
-	}
-	defer db.Close()
-
 	query := `
 	    SELECT COUNT(login)
 		  FROM usuarios
 		 WHERE login = ? 
 	`
 
-	rows, err := db.Query(query, login_usuario)
+	rows, err := DB.Query(query, login_usuario)
 	if err != nil {
 		return false, err.Error(), err
 	}
@@ -272,46 +231,37 @@ func Usuario_Consultar_Login(login_usuario string) (bool, string, error) {
 	return true, msg, nil
 }
 
-func Usuario_Efetuar_Login(usuario models.Usuario_login) (bool, string, error) {
+func Usuario_Efetuar_Login(usuario models.Usuario_login) (bool, string, string, error) {
 	var msg string
-	var total int
-
-	db, err := Conectar()
-	if err != nil {
-		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
-		return false, msg, err
-	}
-	defer db.Close()
+	var usuarioID string
 
 	query := `
-	    SELECT COUNT(codigo) 
+	    SELECT codigo
 		  FROM usuarios 
 		 WHERE (login = ? or ? = '') 
 		   AND (email = ? or ? = '')
 		   AND (senha = ? or ? = '')
 	`
 
-	rows, err := db.Query(query, usuario.Login, usuario.Login, usuario.Email, usuario.Email, usuario.Senha, usuario.Senha)
+	rows, err := DB.Query(query, usuario.Login, usuario.Login, usuario.Email, usuario.Email, usuario.Senha, usuario.Senha)
 	if err != nil {
-		return false, err.Error(), err
+		return false, err.Error(), "", err
 	}
 	defer rows.Close()
 
-	rows.Next()
-
-	err = rows.Scan(&total)
-	if err != nil {
-		msg = "Erro ao validar login/email/senha"
-		return false, msg, err // Erro real
+	if !rows.Next() {
+		msg = fmt.Sprintf("Login: %s invalidado", usuario.Login)
+		return false, msg, "", nil
 	}
 
-	if total == 0 {
-		msg = fmt.Sprintf("Login: %s invalidado", usuario.Login)
-		return false, msg, nil
+	err = rows.Scan(&usuarioID)
+	if err != nil {
+		msg = "Erro ao validar login/email/senha"
+		return false, msg, "", err // Erro real
 	}
 
 	// Sucesso - Encontrou
 	msg = fmt.Sprintf("Login: %s validado", usuario.Login)
-	return true, msg, nil
+	return true, msg, usuarioID, nil
 	// Sucesso - Encontrou
 }

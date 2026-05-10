@@ -11,16 +11,16 @@ collection:
     meta:
       id: fld_09d042ebb148459087af420c97137fb0
       created: 1772150062244
-      modified: 1772150062244
-      sortKey: -1772150062244
+      modified: 1774582073096
+      sortKey: -1772818534734
       description: ""
     children:
-      - url: http://localhost:3000/servico/5
+      - url: http://localhost:3000/servicos/5
         name: servico-atualizar
         meta:
           id: req_a2f2f26c5bce4e17a1b7b9017b65a392
           created: 1772149092957
-          modified: 1772150091072
+          modified: 1774725333285
           isPrivate: false
           description: ""
           sortKey: -1772150067535
@@ -47,12 +47,12 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: http://localhost:3000/servico
+      - url: http://localhost:3000/servicos
         name: servico-inserir
         meta:
           id: req_1daaee94376548b48d4d314674298487
           created: 1772151357637
-          modified: 1773000111291
+          modified: 1774725329720
           isPrivate: false
           description: ""
           sortKey: -1772151357637
@@ -79,12 +79,12 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: http://localhost:3000/servico
+      - url: http://localhost:3000/servicos
         name: servico-consulta
         meta:
           id: req_9c0748318c3f43b7aff28743232be878
           created: 1772154854505
-          modified: 1772154886657
+          modified: 1774725343459
           isPrivate: false
           description: ""
           sortKey: -1772150067435
@@ -102,12 +102,12 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: http://localhost:3000/servico/1
+      - url: http://localhost:3000/servicos/1
         name: servico-consulta-codigo
         meta:
           id: req_a6db9da39b40427d802d511307b13caf
           created: 1772154928152
-          modified: 1772154968668
+          modified: 1774725349526
           isPrivate: false
           description: ""
           sortKey: -1772150067335
@@ -125,12 +125,12 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: http://localhost:3000/servico/4
+      - url: http://localhost:3000/servicos/4
         name: servico-deleta
         meta:
           id: req_d3eeefe81a52495da58fde6a4cc7f6ef
           created: 1772154998986
-          modified: 1772936361786
+          modified: 1774725337429
           isPrivate: false
           description: ""
           sortKey: -1772150067485
@@ -152,16 +152,16 @@ collection:
     meta:
       id: fld_c663b868d7b2494a81b35868aa8638e0
       created: 1772150105804
-      modified: 1772150105804
-      sortKey: -1772150105804
+      modified: 1774582067446
+      sortKey: -1772818534884
       description: ""
     children:
-      - url: http://localhost:3000/usuario
+      - url: http://localhost:3000/usuarios
         name: usuario-inserir
         meta:
           id: req_2bffa46c576b45daafb26cee2b2f402a
           created: 1771790973112
-          modified: 1772940014980
+          modified: 1775706233446
           isPrivate: false
           description: ""
           sortKey: -1772150117446
@@ -170,10 +170,10 @@ collection:
           mimeType: application/json
           text: |-
             { 
-            "nome": "alisson delaroza",
-            "login": "alissondelaroza",
+            "nome": "romeu",
+            "login": "romeu",
             "senha": "123",
-            "email": "alisson.delaroza@gmail.com",
+            "email": "romeu@gmail.com.br",
             "tipo": "admin"
             }
         headers:
@@ -191,12 +191,12 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: http://localhost:3000/usuario/3
+      - url: http://localhost:3000/usuarios/3
         name: usuario-atualiza
         meta:
           id: req_8dcf39b96cb7487c8abc12efbba89d9f
           created: 1771809192731
-          modified: 1772150573557
+          modified: 1774581519025
           isPrivate: false
           description: ""
           sortKey: -1772150117396
@@ -206,9 +206,9 @@ collection:
           text: |-
             { 
             "nome": "neuza delaroza",
-            "login": "neuzadelaroza",
+            "login": "neuza.delaroza",
             "senha": "123",
-            "email": "neuza.delaroza@gmail.com",
+            "email": "neuza.delaroza@gmail.com.br",
             "tipo": "user"
             }
         headers:
@@ -226,12 +226,12 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: http://localhost:3000/usuario/3
+      - url: http://localhost:3000/usuarios/3
         name: usuario-deleta
         meta:
           id: req_52ebd6f424bb4d0d97e3062c72b2e43c
           created: 1771810526594
-          modified: 1772155064896
+          modified: 1774581515007
           isPrivate: false
           description: ""
           sortKey: -1772150117346
@@ -249,12 +249,12 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: http://localhost:3000/usuario/1
+      - url: http://localhost:3000/usuarios/1
         name: usuario-consulta-codigo
         meta:
           id: req_ce97129eb7904f07b9de4273de15600f
           created: 1771814132635
-          modified: 1772154917656
+          modified: 1775703824160
           isPrivate: false
           description: ""
           sortKey: -1772150117246
@@ -264,6 +264,11 @@ collection:
             value: insomnia/12.3.1
             description: ""
             disabled: false
+        authentication:
+          type: bearer
+          disabled: false
+          token: ""
+          prefix: ""
         settings:
           renderRequestBody: true
           encodeUrl: true
@@ -272,12 +277,12 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: http://localhost:3000/usuario
+      - url: http://localhost:3000/usuarios
         name: usuario-consulta
         meta:
           id: req_1256f2cf004e45819fce27649c3d4cd8
           created: 1771860378317
-          modified: 1772154908425
+          modified: 1774581512135
           isPrivate: false
           description: ""
           sortKey: -1772150117296
@@ -303,12 +308,12 @@ collection:
       sortKey: -1772818534684
       description: ""
     children:
-      - url: http://localhost:3000/log?id=3
+      - url: http://localhost:3000/logs?id=3
         name: log-consulta-codigo
         meta:
           id: req_7597e9f86e7245cfa5b23e232614b170
           created: 1772818557271
-          modified: 1772954837309
+          modified: 1774725360075
           isPrivate: false
           description: ""
           sortKey: -1772818622465
@@ -326,12 +331,12 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: http://localhost:3000/log?data=2026-03-08
+      - url: http://localhost:3000/logs?dataInicio=2026-03-07&dataFim=2026-03-07
         name: log-consulta-data
         meta:
           id: req_8be28650187a4b5d890ad7379982152e
           created: 1772944030679
-          modified: 1772955060733
+          modified: 1774724097955
           isPrivate: false
           description: ""
           sortKey: -1772818622365
@@ -349,16 +354,80 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: http://localhost:3000/log?id=5&data=2026-03-07
+      - url: http://localhost:3000/logs?id=5&dataInicio=2026-03-05&dataFim=2026-03-07
         name: log-consulta-codigo&data
         meta:
           id: req_bbbf53fe8dce4a148f886c14d1ac49cf
           created: 1772950291715
-          modified: 1773000255616
+          modified: 1774725363188
           isPrivate: false
           description: ""
           sortKey: -1772818622565
         method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.4.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Usuario-Login-Token
+    meta:
+      id: fld_a649d4c25085403d94a78bb0e073a8f9
+      created: 1774582029539
+      modified: 1774582081307
+      sortKey: -1772818534984
+      description: ""
+    children:
+      - url: http://localhost:3000/login
+        name: usuario-login
+        meta:
+          id: req_1cbd1034e6194d049260aebd3f7df2ef
+          created: 1774562818393
+          modified: 1775697654637
+          isPrivate: false
+          description: ""
+          sortKey: -1774582048254
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            { 
+            "login": "ADELAROZA",
+            "senha": "123",
+            "email": ""
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.4.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/logout
+        name: usuario-logout
+        meta:
+          id: req_3da4d9e900c940ccb35b1c0fc56abc88
+          created: 1775705287523
+          modified: 1775705451851
+          isPrivate: false
+          description: ""
+          sortKey: -1774582048354
+        method: POST
         headers:
           - name: User-Agent
             value: insomnia/12.4.0
@@ -377,7 +446,7 @@ cookieJar:
   meta:
     id: jar_aa5ef0cea742a59c0c91dc110fc49d4a30adf43d
     created: 1771790973057
-    modified: 1771790973057
+    modified: 1775706295424
 environments:
   name: Base Environment
   meta:

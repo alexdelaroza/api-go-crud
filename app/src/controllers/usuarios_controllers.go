@@ -3,58 +3,15 @@ package controllers
 import (
 	"api-go-crud/src/database"
 	"api-go-crud/src/models"
+	"api-go-crud/src/validation"
+	"fmt"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-func Valida_usuario_login(usuario models.Usuario_login) (bool, string) {
-
-	if usuario.Login == "" && usuario.Email == "" {
-		return false, "O campo 'email' ou 'login' é obrigatório e deve ser preenchido!"
-	}
-
-	if usuario.Senha == "" {
-		return false, "O campo 'senha' é obrigatório e deve ser preenchido!"
-	}
-
-	return true, ""
-}
-
-func Valida_usuario_input(usuario models.Usuario_input) (bool, string) {
-	if usuario.Nome == "" {
-		return false, "O campo 'nome' é obrigatório e deve ser preenchido!"
-	}
-
-	if usuario.Login == "" {
-		return false, "O campo 'login' é obrigatório e deve ser preenchido!"
-	}
-
-	if usuario.Senha == "" {
-		return false, "O campo 'senha' é obrigatório e deve ser preenchido!"
-	}
-
-	if usuario.Email == "" {
-		return false, "O campo 'email' é obrigatório e deve ser preenchido!"
-	}
-
-	if usuario.Tipo == "" {
-		return false, "O campo 'tipo' é obrigatório e deve ser preenchido!"
-	}
-
-	return true, ""
-}
-
-func Valida_usuario_id(id string) (bool, string) {
-	if id == "" {
-		return false, "O campo 'id' é obrigatório e deve ser preenchido!"
-	}
-
-	return true, ""
-}
-
 // CRUD - Usuarios
-func Insere_Usuario(c *fiber.Ctx) error {
+func InserirUsuarios(c *fiber.Ctx) error {
 	var novo_usuario models.Usuario_input
 
 	err := c.BodyParser(&novo_usuario)
@@ -66,7 +23,9 @@ func Insere_Usuario(c *fiber.Ctx) error {
 	}
 
 	// Valida Dados de Entrada
-	valido, msg_ret_ent := Valida_usuario_input(novo_usuario)
+	// Como a função pede um ponteiro (*models.Usuario_input), você usa o símbolo "&"" na frente da variável.
+	// & <-- passa o "endereço" da variável
+	valido, msg_ret_ent := validation.ValidarInputUsuarios(novo_usuario)
 	if !valido {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{
@@ -136,7 +95,7 @@ func Insere_Usuario(c *fiber.Ctx) error {
 
 }
 
-func Atualiza_Usuario(c *fiber.Ctx) error {
+func AtualizarUsuarios(c *fiber.Ctx) error {
 	var altera_usuario models.Usuario_input
 	err := c.BodyParser(&altera_usuario)
 	if err != nil {
@@ -149,19 +108,19 @@ func Atualiza_Usuario(c *fiber.Ctx) error {
 	var id string
 	id = c.Params("id")
 	// Valida Dados de Entrada
-	valido, msg_ret := Valida_usuario_id(id)
+	valido, msg_ret_id := validation.ValidarId(id)
 	if !valido {
 		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{"message": msg_ret})
+		return c.JSON(fiber.Map{"message": msg_ret_id})
 	}
 
 	// Valida se o Email ja existe no Cadastro
-	achou_email, msg_ret_email, err := database.Usuario_Consultar_Email(altera_usuario.Email)
-	if err != nil {
+	achou_email, msg_ret_email, err_email := database.Usuario_Consultar_Email(altera_usuario.Email)
+	if err_email != nil {
 		c.Status(fiber.StatusInternalServerError)
 		return c.JSON(fiber.Map{
 			"message": msg_ret_email,
-			"error":   err.Error(),
+			"error":   err_email.Error(),
 		})
 	}
 	if achou_email {
@@ -172,12 +131,12 @@ func Atualiza_Usuario(c *fiber.Ctx) error {
 	}
 
 	// Valida se o Login ja existe no Cadastro
-	achou_login, msg_ret_login, err := database.Usuario_Consultar_Login(altera_usuario.Login)
-	if err != nil {
+	achou_login, msg_ret_login, err_ret_login := database.Usuario_Consultar_Login(altera_usuario.Login)
+	if err_ret_login != nil {
 		c.Status(fiber.StatusInternalServerError)
 		return c.JSON(fiber.Map{
 			"message": msg_ret_login,
-			"error":   err.Error(),
+			"error":   err_ret_login.Error(),
 		})
 	}
 	if achou_login {
@@ -188,20 +147,19 @@ func Atualiza_Usuario(c *fiber.Ctx) error {
 	}
 
 	// Valida se o Usuario existe no Cadastro
-	_, achou, err, msg := database.Usuario_Consultar_Codigo(id)
-	if err != nil {
+	_, achou, err_ret_id, msg_ret_id := database.Usuario_Consultar_Codigo(id)
+	if err_ret_id != nil {
 		c.Status(fiber.StatusInternalServerError)
-		return c.JSON(fiber.Map{"error": err.Error()})
+		return c.JSON(fiber.Map{"error": err_ret_id.Error()})
 	}
 
 	if !achou {
 		// Usuário não existe. Não sera alterado...
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{
-			"message": msg,
+			"message": msg_ret_id,
 			"user":    id,
 		})
-
 	} else {
 		// Usuário existe. Seguindo para alteração...
 		msg, err := database.Usuario_Atualizar(id, altera_usuario)
@@ -216,12 +174,12 @@ func Atualiza_Usuario(c *fiber.Ctx) error {
 		novo_log.Criado_por = "1"
 		novo_log.Descricao = "alteracao de usuario"
 
-		msg, err = database.Log_Inserir(novo_log)
-		if err != nil {
+		msg_log, err_log := database.Log_Inserir(novo_log)
+		if err_log != nil {
 			c.Status(fiber.StatusInternalServerError)
 			return c.JSON(fiber.Map{
-				"message": msg,
-				"error":   err.Error(),
+				"message": msg_log,
+				"error":   err_log.Error(),
 			})
 		}
 		// log -> INSERIR
@@ -234,12 +192,12 @@ func Atualiza_Usuario(c *fiber.Ctx) error {
 	}
 }
 
-func Deleta_Usuario(c *fiber.Ctx) error {
+func DeletarUsuarios(c *fiber.Ctx) error {
 	var id string
 	id = c.Params("id")
 
 	// Valida Dados de Entrada
-	valido, msg_ret := Valida_usuario_id(id)
+	valido, msg_ret := validation.ValidarId(id)
 	if !valido {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{"message": msg_ret})
@@ -291,7 +249,7 @@ func Deleta_Usuario(c *fiber.Ctx) error {
 	}
 }
 
-func Consulta_Usuario(c *fiber.Ctx) error {
+func ListarUsuarios(c *fiber.Ctx) error {
 	lista, err, msg := database.Usuario_Consultar()
 	if err != nil {
 		c.Status(fiber.StatusInternalServerError)
@@ -306,12 +264,15 @@ func Consulta_Usuario(c *fiber.Ctx) error {
 	})
 }
 
-func Consulta_Usuario_Codigo(c *fiber.Ctx) error {
+func ConsultarCodigoUsuarios(c *fiber.Ctx) error {
 	var id string
 	id = c.Params("id")
+	userID := c.Locals("user_id")
+
+	fmt.Println("ConsultarCodigoUsuarios = :", userID)
 
 	// Valida Dados de Entrada
-	valido, msg_ret := Valida_usuario_id(id)
+	valido, msg_ret := validation.ValidarId(id)
 	if !valido {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{"message": msg_ret})
@@ -335,48 +296,6 @@ func Consulta_Usuario_Codigo(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{
 			"message": msg,
 			"user":    usuario, // Adiciona o objeto inteiro aqui
-		})
-	}
-}
-
-func Efetuar_Usuario_Login(c *fiber.Ctx) error {
-	var login_usuario models.Usuario_login
-
-	err := c.BodyParser(&login_usuario)
-	if err != nil {
-		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{
-			"error": "JSON inválido",
-		})
-	}
-
-	// Valida Dados de Entrada
-	valido, msg_ret := Valida_usuario_login(login_usuario)
-	if !valido {
-		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{"message": msg_ret})
-	}
-
-	achou, msg, err := database.Usuario_Efetuar_Login(login_usuario)
-	if err != nil {
-		c.Status(fiber.StatusInternalServerError)
-		return c.JSON(fiber.Map{
-			"error": err.Error(),
-		})
-	}
-
-	if !achou {
-		// Login não é valido...
-		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{
-			"message": msg,
-		})
-	} else {
-		// Login é valido...
-		c.Status(fiber.StatusOK)
-		return c.JSON(fiber.Map{
-			"message": msg,
-			//"user":    login_usuario, // Adiciona o objeto inteiro aqui
 		})
 	}
 }

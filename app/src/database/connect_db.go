@@ -1,24 +1,27 @@
 package database
 
 import (
+	"api-go-crud/src/config"
 	"database/sql"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
+// Variável global para manter a conexão ativa
+var DB *sql.DB
+
 // Abre aconexão com o banco de dados
-func Conectar() (*sql.DB, error) {
-	//stringConexao := "root:root@/cursogo?parseTime=True"
-	stringConexao := "root:root@/crud_db?parseTime=True"
+func ConectarDb() error {
+	var erro error
 
-	db, erro := sql.Open("mysql", stringConexao)
+	DB, erro = sql.Open("mysql", config.StringConexaoBanco)
 	if erro != nil {
-		return nil, erro
+		return erro
 	}
 
-	if erro = db.Ping(); erro != nil {
-		return nil, erro
+	if erro = DB.Ping(); erro != nil {
+		DB.Close()
+		return erro
 	}
-
-	return db, nil
+	return nil
 }

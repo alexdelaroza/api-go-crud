@@ -10,20 +10,13 @@ import (
 func Log_Inserir(input_log models.Log_input) (string, error) {
 	var msg string
 
-	db, err := Conectar()
-	if err != nil {
-		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
-		return msg, err
-	}
-	defer db.Close()
-
 	query := `INSERT INTO log (
                           descricao
 						, cod_recurso
 						, criado_por
                  ) VALUES (?, ?, ?)`
 
-	stmt, err := db.Prepare(query)
+	stmt, err := DB.Prepare(query)
 	if err != nil {
 		msg = fmt.Sprintf("Erro ao preparar a query: %s", err.Error())
 		return msg, err
@@ -49,13 +42,6 @@ func Log_Inserir(input_log models.Log_input) (string, error) {
 func Log_Consultar(codigo_recurso, dataInicio, dataFim string) ([]models.Log_output, bool, error, string) {
 	var msg string
 
-	db, err := Conectar()
-	if err != nil {
-		msg = fmt.Sprintf("Erro ao conectar: %s", err.Error())
-		return nil, false, err, msg
-	}
-	defer db.Close()
-
 	query := `
 	    SELECT codigo, descricao, cod_recurso, criado_por, data_criacao_atu 
 		  FROM log 
@@ -63,7 +49,7 @@ func Log_Consultar(codigo_recurso, dataInicio, dataFim string) ([]models.Log_out
 		   AND (DATE(data_criacao_atu) >= ? AND DATE(data_criacao_atu) <= ?)
 	`
 
-	rows, err := db.Query(query, codigo_recurso, codigo_recurso, dataInicio, dataFim)
+	rows, err := DB.Query(query, codigo_recurso, codigo_recurso, dataInicio, dataFim)
 	if err != nil {
 		return nil, false, err, err.Error()
 	}

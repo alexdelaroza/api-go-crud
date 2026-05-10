@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"api-go-crud/src/database"
+	"api-go-crud/src/validation"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -11,11 +12,22 @@ func Consulta_Log(c *fiber.Ctx) error {
 	dataInicio := c.Query("dataInicio") // ex: ?data=2026-03-08
 	dataFim := c.Query("dataFim")       // ex: ?data=2026-03-08
 
+	var valida bool
+	var msg string
+
 	// Verifica entrada de dados
 	if dataInicio == "" && dataFim == "" {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{
 			"error": "Informe 'dataInicio' e 'dataFim' na pesquisa - obrigatório e devem ser preenchido!",
+		})
+	}
+
+	valida, msg = validation.ValidarData(dataInicio, dataFim)
+	if !valida {
+		c.Status(fiber.StatusNotFound)
+		return c.JSON(fiber.Map{
+			"message": msg,
 		})
 	}
 
