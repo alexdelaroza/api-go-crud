@@ -36,7 +36,7 @@ func main() {
 	// AllowCredentials definida como true, permite que o servidor inclua cookies e cabeçalhos de autenticação na solicitação.
 	app.Use(cors.New(cors.Config{
 		// Permite tanto o acesso local quanto o acesso pelo IP da sua rede
-		AllowOrigins:     "http://localhost:3001, http://192.168.31.14:3001",
+		AllowOrigins:     "http://localhost:3001, http://127.0.0.1:3001, http://192.168.31.14:3001",
 		AllowCredentials: true,
 		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
 		AllowMethods:     "GET, POST, PUT, DELETE, OPTIONS",

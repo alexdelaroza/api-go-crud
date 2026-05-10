@@ -46,13 +46,12 @@ func MontaStringConexaoBD() string {
 	usuario := os.Getenv("DB_USUARIO")
 	senha := os.Getenv("DB_SENHA")
 	banco := os.Getenv("DB_BANCO")
-
-	// Para rodar Docker => o Host: "db"        => "DB_HOST_DOCKER"
-	// Para rodar local  => o Host: "127.0.0.1" => "DB_HOST_LOCAL"
-	host := os.Getenv("DB_HOST_LOCAL")
-
 	// A porta interna do container MySQL é "3306"
 	porta := os.Getenv("DB_PORTA")
+
+	// Para rodar Docker => o Host: "db"        => "DB_HOST"
+	// Para rodar local  => o Host: "127.0.0.1" => "DB_HOST"
+	host := os.Getenv("DB_HOST")
 
 	// Formato: usuario:senha@tcp(host:porta)/nome_do_banco?opcoes
 	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
