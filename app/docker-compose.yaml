@@ -21,6 +21,11 @@ services:
         condition: service_healthy # Só sobe a API quando o MySQL estiver pronto
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   # Serviço do Banco de Dados MySQL
   db:

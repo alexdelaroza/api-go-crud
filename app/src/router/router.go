@@ -10,6 +10,7 @@ func Setup(app *fiber.App) {
 	// Rotas Públicas
 	app.Post("/login", controllers.Login)
 	app.Post("/logout", controllers.Logout)
+	app.Get("/health", controllers.HealthCheck)
 
 	// Middleware de Autenticação (Verifica se o token existe e é válido)
 	app.Use(controllers.AuthorizationHeader)
