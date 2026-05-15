@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # Serviço da sua API Go com Fiber
+  # Serviço da API
   api:
     build: .
     image: fiber-app:latest
